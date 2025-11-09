@@ -1,6 +1,7 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/api/gemini", "destination": "/api/gemini.js" },
+    { "source": "/api/telegram", "destination": "/api/telegram.js" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
