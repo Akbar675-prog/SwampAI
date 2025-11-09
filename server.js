@@ -73,3 +73,4 @@ loadConfig().then(() => {
         console.log('Buka: http://localhost:3000/tools/chatbot.html');
     });
 });
+module.exports = app;
