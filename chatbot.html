@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swampy AI - Chatbot</title>
+    <meta property="og:image" content="https://od.lk/s/OTlfNzQzOTkyMjdf/Screenshot_20251109_114139_CapCut.png">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="">
+    <meta property="og:description" content="Swampy AI, adalah AI dengan fitur lengkap yang telah diverifikasi oleh Google LLC.">
+    <link rel="icon" href="https://od.lk/s/OTlfNzQzOTkyMjdf/Screenshot_20251109_114139_CapCut.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #fafafa; --bg-secondary: #ffffff; --bg-tertiary: #f5f5f5; --bg-card: #ffffff;
+            --text-primary: #000000; --text-secondary: #737373; --text-muted: #a3a3a3;
+            --border: #e5e5e5; --accent: #0ea5e9; --accent-hover: #0284c7;
+            --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
+            --user-message: #0ea5e9; --bot-message: #f5f5f5; --success: #10b981; --error: #ef4444;
+            --code-bg: #0d1117; --code-text: #d4d4d4;
+        }
+        [data-theme="dark"] {
+            --bg-primary: #000000; --bg-secondary: #0a0a0a; --bg-tertiary: #1a1a1a; --bg-card: #121212;
+            --text-primary: #ffffff; --text-secondary: #a3a3a3; --text-muted: #737373; --border: #262626;
+            --shadow-sm: 0 1px 3px rgba(255, 255, 255, 0.02);
+            --shadow-md: 0 4px 12px rgba(255, 255, 255, 0.03);
+            --shadow-lg: 0 20px 40px rgba(255, 255, 255, 0.05);
+            --bot-message: #1a1a1a;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes typing { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out 0.1s both;
+            max-height: calc(100vh - 280px);
+            min-height: 400px;
+        }
+
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .chat-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .bot-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+            overflow: hidden;
+        }
+
+        .bot-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .bot-status {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .bot-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+        }
+
+        .bot-online {
+            font-size: 0.75rem;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .online-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .chat-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-toggle {
+            position: relative;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            min-width: 180px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-menu.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+            border-radius: 0 0 12px 12px;
+        }
+
+        .dropdown-item:first-child {
+            border-radius: 12px 12px 0 0;
+        }
+
+        .dropdown-item:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .dropdown-item.active {
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .chatbox {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: var(--bg-primary);
+        }
+
+        .message-wrapper {
+            display: flex;
+            gap: 0.75rem;
+            animation: slideUp 0.3s ease-out;
+            align-items: flex-start;
+        }
+
+        .message-wrapper.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            min-width: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.875rem;
+            color: white;
+            margin-top: 0.25rem;
+            overflow: hidden;
+        }
+
+        .message-avatar.bot {
+            background: var(--gradient-primary);
+        }
+
+        .message-avatar.user {
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+        }
+
+        .message-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .message-content {
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+            max-width: calc(100% - 48px);
+            min-width: 0;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 0 0.25rem;
+        }
+
+        .message-wrapper.user .message-header {
+            flex-direction: row-reverse;
+        }
+
+        .message-bubble {
+            padding: 0.875rem 1.125rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .message-bubble.user {
+            background: var(--user-message);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-bubble.bot {
+            background: var(--bot-message);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 0.75rem 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-language {
+            color: #58a6ff;
+            font-weight: 600;
+            text-transform: capitalize;
+            font-size: 0.8rem;
+            font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+        }
+
+        .code-copy-btn {
+            padding: 0.4rem 0.8rem;
+            background: rgba(14, 165, 233, 0.1);
+            color: #58a6ff;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .code-copy-btn:hover {
+            background: rgba(14, 165, 233, 0.2);
+            border-color: rgba(14, 165, 233, 0.5);
+        }
+
+        .code-copy-btn.copied {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .code-content {
+            overflow-x: auto;
+        }
+
+        .code-content pre {
+            margin: 0;
+            padding: 1rem;
+            background: transparent;
+        }
+
+        .code-content code {
+            display: block;
+            color: var(--code-text);
+            font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            white-space: pre;
+        }
+
+        .message-bubble code.inline-code {
+            background: rgba(14, 165, 233, 0.1);
+            color: #58a6ff;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+            font-size: 0.875rem;
+            border: 1px solid rgba(14, 165, 233, 0.2);
+        }
+
+        .message-link {
+            color: var(--accent);
+            text-decoration: underline;
+            font-weight: 600;
+            word-break: break-all;
+            transition: color 0.2s ease;
+        }
+
+        .message-link:hover {
+            color: var(--accent-hover);
+            text-decoration: none;
+        }
+
+        .message-bubble.user .message-link {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .message-bubble.user .message-link:hover {
+            color: #e0f2fe;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.25rem;
+            padding: 0 0.25rem;
+            flex-wrap: wrap;
+        }
+
+        .message-action {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+        }
+
+        .message-action:hover {
+            background: var(--bg-tertiary);
+            color: var(--accent);
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 0.75rem;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .typing-dots {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.875rem 1.125rem;
+            background: var(--bot-message);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        .chat-input-container {
+            padding: 1rem 1.25rem;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+        }
+
+        .suggested-prompts {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .prompt-chip {
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .prompt-chip:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .input-wrapper {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .input-field {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .char-counter {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .newline-hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 44px;
+            max-height: 120px;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-family: inherit;
+            resize: none;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+        }
+
+        textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .input-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .send-btn, .newline-btn {
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.125rem;
+            transition: all 0.3s ease;
+        }
+
+        .send-btn {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .send-btn:hover:not(:disabled) {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .newline-btn {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .newline-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: scale(1.05);
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            animation: slideUp 0.6s ease-out 0.2s both;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.125;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 10000;
+            transform: translateY(150%);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .toast-icon.success { background: var(--success); }
+        .toast-icon.error { background: var(--error); }
+
+        .toast-content { flex: 1; }
+        .toast-title { font-weight: 600; margin-bottom: 0.25rem; font-size: 0.875rem; color: var(--text-primary); }
+        .toast-message { font-size: 0.8rem; color: var(--text-secondary); }
+
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 1.5rem;
+            gap: 1.5rem;
+        }
+
+        .welcome-icon {
+            width: 200px;
+            height: 200px;
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .welcome-icon video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 20px;
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .welcome-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            max-width: 400px;
+        }
+
+        .example-prompts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 1rem;
+        }
+
+        .example-prompt {
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .example-prompt:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .example-prompt i {
+            margin-bottom: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .example-prompt-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 0.5rem; }
+            .chat-container { max-height: calc(100vh - 220px); min-height: 450px; }
+            .chat-header { padding: 1rem; flex-wrap: wrap; gap: 0.75rem; }
+            .bot-avatar { width: 38px; height: 38px; }
+            .action-btn { width: 34px; height: 34px; font-size: 0.9rem; }
+            .chatbox { padding: 1.25rem 1rem; gap: 1rem; }
+            .message-avatar { width: 30px; height: 30px; min-width: 30px; font-size: 0.8rem; }
+            .message-content { max-width: calc(100% - 38px); }
+            .message-bubble { padding: 0.75rem 1rem; font-size: 0.875rem; }
+            .chat-input-container { padding: 1rem; }
+            .send-btn, .newline-btn { width: 48px; height: 48px; }
+            .stats-bar { grid-template-columns: 1fr; }
+            .toast { bottom: 1rem; right: 1rem; left: 1rem; min-width: auto; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+        ::selection { background: rgba(14, 165, 233, 0.2); color: var(--text-primary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="chat-info">
+                    <div class="bot-avatar" id="botAvatar">
+                        <!-- JS isi -->
+                    </div>
+                    <div class="bot-status">
+                        <div class="bot-name">Swampy AI</div>
+                        <div class="bot-online">
+                            <span class="online-dot"></span>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <div class="dropdown" id="modelDropdown">
+                        <button class="action-btn dropdown-toggle" title="Pilih Model">
+                            <i class="fas fa-robot"></i>
+                        </button>
+                        <div class="dropdown-menu" id="modelMenu">
+                            <div class="dropdown-item active" data-model="nova">Nova <small>Cepat & Cerdas</small></div>
+                            <div class="dropdown-item" data-model="lumen">Lumen <small>Kreatif</small></div>
+                            <div class="dropdown-item" data-model="echo">Echo <small>Ringkas</small></div>
+                            <div class="dropdown-item" data-model="pulse">Pulse <small>Enerjik</small></div>
+                            <div class="dropdown-item" data-model="aether">Aether <small>Formal</small></div>
+                            <div class="dropdown-item" data-model="cipher">Cipher <small>Coding</small></div>
+                            <div class="dropdown-item" data-model="drift">Drift <small>Santai</small></div>
+                            <div class="dropdown-item" data-model="flux">Flux <small>Adaptif</small></div>
+                            <div class="dropdown-item" data-model="zenith">Zenith <small>Pro</small></div>
+                            <div class="dropdown-item" data-model="spectra">Spectra <small>Serba Guna</small></div>
+                        </div>
+                    </div>
+                    <button class="action-btn" id="themeToggle" title="Ganti Tema">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    <button class="action-btn" id="clearChat" title="Clear Chat">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="action-btn" id="exportChat" title="Export Chat">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="chatbox" id="chatbox">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <div class="welcome-icon" id="welcomeIcon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <div class="welcome-title">Welcome to Swampy AI!</div>
+                    <div class="welcome-text">
+                        Tanya apa saja! Saya bisa bantu coding, debug, dan banyak lagi.
+                    </div>
+                    <div class="example-prompts">
+                        <div class="example-prompt" data-prompt="Jelaskan async/await">
+                            <i class="fas fa-code"></i>
+                            <div class="example-prompt-text">Jelaskan async/await</div>
+                        </div>
+                        <div class="example-prompt" data-prompt="Tulis fungsi sort Python">
+                            <i class="fas fa-python"></i>
+                            <div class="example-prompt-text">Python sort</div>
+                        </div>
+                        <div class="example-prompt" data-prompt="REST vs GraphQL">
+                            <i class="fas fa-question-circle"></i>
+                            <div class="example-prompt-text">REST vs GraphQL</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="suggested-prompts" id="suggestedPrompts">
+                    <div class="prompt-chip" data-prompt="Jelaskan kode ini">Jelaskan kode</div>
+                    <div class="prompt-chip" data-prompt="Perbaiki bug">Fix bug</div>
+                    <div class="prompt-chip" data-prompt="Optimasi performa">Optimasi</div>
+                </div>
+                <form id="chatForm">
+                    <div class="input-wrapper">
+                        <div class="input-field">
+                            <textarea id="userMessage" placeholder="Ketik pesan..." rows="1" maxlength="2000"></textarea>
+                            <div class="input-controls">
+                                <span class="newline-hint">Tap Enter untuk baris baru</span>
+                                <span class="char-counter"><span id="charCount">0</span>/2000</span>
+                            </div>
+                        </div>
+                        <div class="input-actions">
+                            <button type="button" class="newline-btn" id="newlineBtn" title="Baris baru">Enter</button>
+                            <button type="submit" class="send-btn" id="sendBtn" disabled title="Kirim pesan">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-comments"></i></div>
+                <div class="stat-info">
+                    <div class="stat-label">Pesan</div>
+                    <div class="stat-value" id="messageCount">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-info">
+                    <div class="stat-label">Rata-rata</div>
+                    <div class="stat-value" id="avgResponse">-</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-fire"></i></div>
+                <div class="stat-info">
+                    <div class="stat-label">Sesi</div>
+                    <div class="stat-value" id="sessionTime">0:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <div class="toast-icon success"><i class="fas fa-check"></i></div>
+        <div class="toast-content">
+            <div class="toast-title">Sukses</div>
+            <div class="toast-message">Operasi selesai</div>
+        </div>
+    </div>
+
+    <script>
+        // === MODEL SYSTEM ===
+        const MODELS = {
+            'nova': { name: 'Nova', desc: 'Cepat & Cerdas', prompt: 'Kamu adalah AI super cepat dan cerdas. Jawab langsung, akurat, tanpa basa-basi.' },
+            'lumen': { name: 'Lumen', desc: 'Kreatif & Penerang', prompt: 'Kamu adalah guru bijak yang menerangi pikiran. Jelaskan dengan analogi, cerita, dan contoh nyata.' },
+            'echo': { name: 'Echo', desc: 'Ringkas & Jelas', prompt: 'Jawab maksimal 2 kalimat. Padat, jelas, tanpa penjelasan panjang.' },
+            'pulse': { name: 'Pulse', desc: 'Interaktif & Enerjik', prompt: 'Kamu adalah teman ngobrol yang antusias. Gunakan emoji, tanya balik, dan buat seru!' },
+            'aether': { name: 'Aether', desc: 'Profesional & Formal', prompt: 'Kamu adalah konsultan profesional. Gunakan bahasa formal, terstruktur, dan sopan.' },
+            'cipher': { name: 'Cipher', desc: 'Master Kode', prompt: 'Kamu ahli coding. Berikan kode bersih + komentar + penjelasan singkat. Gunakan Markdown.' },
+            'drift': { name: 'Drift', desc: 'Santai & Ramah', prompt: 'Kamu adalah teman santai. Gunakan bahasa sehari-hari, humor ringan, dan emoji.' },
+            'flux': { name: 'Flux', desc: 'Adaptif & Fleksibel', prompt: 'Sesuaikan gaya jawaban dengan pertanyaan: formal jika serius, santai jika ringan.' },
+            'zenith': { name: 'Zenith', desc: 'Pro Maksimal', prompt: 'Kamu adalah versi terbaik: jawab mendalam, detail, dengan referensi jika perlu.' },
+            'spectra': { name: 'Spectra', desc: 'Serba Guna', prompt: 'Kamu bisa semua: coding, cerita, analisis, kreatif. Pilih gaya terbaik sesuai konteks.' }
+        };
+
+        let currentModel = 'nova';
+
+        // === API ENDPOINTS (Backend Proxy) ===
+        const GEMINI_ENDPOINT = '/api/gemini';
+        const TELEGRAM_ENDPOINT = '/api/telegram';
+
+        const LIGHT_PROFILE = 'https://files.catbox.moe/y8tb6l.png';
+        const DARK_PROFILE  = 'https://files.catbox.moe/3p6brz.png';
+        const LIGHT_VIDEO   = 'src/video/thumbLight.mp4';
+        const DARK_VIDEO    = 'src/video/thumbDark.mp4';
+
+        // === TELEGRAM MONITORING (via backend) ===
+        async function sendToTelegram(sender, time, message) {
+            const cleanMsg = message
+                .replace(/<[^>]*>/g, '')
+                .replace(/\*\*/g, '*')
+                .replace(/```[\s\S]*?```/g, '(kode)')
+                .replace(/`([^`]+)`/g, '`$1`');
+            const text = `${sender} • ${time}\n${cleanMsg}`;
+            try {
+                await fetch(TELEGRAM_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text, parse_mode: 'Markdown' })
+                });
+            } catch (err) {
+                console.warn('Telegram gagal:', err);
+            }
+        }
+
+        // === ELEMENTS ===
+        const botAvatarHeader = document.getElementById('botAvatar');
+        const welcomeIcon     = document.getElementById('welcomeIcon');
+        const modelDropdown   = document.getElementById('modelDropdown');
+        const modelMenu       = document.getElementById('modelMenu');
+        const dropdownToggle  = modelDropdown.querySelector('.dropdown-toggle');
+        const chatbox = document.getElementById('chatbox');
+        const form = document.getElementById('chatForm');
+        const input = document.getElementById('userMessage');
+        const sendBtn = document.getElementById('sendBtn');
+        const newlineBtn = document.getElementById('newlineBtn');
+        const charCount = document.getElementById('charCount');
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const clearChatBtn = document.getElementById('clearChat');
+        const exportChatBtn = document.getElementById('exportChat');
+        const themeToggle = document.getElementById('themeToggle');
+
+        let messageCount = 0;
+        let responseTimes = [];
+        let sessionStart = Date.now();
+        let chatHistory = [];
+        let controller = null;
+        let isDarkMode = false;
+
+        // === TEMA ===
+        const body = document.body;
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        function updateBotAvatar() {
+            const profile = isDarkMode ? DARK_PROFILE : LIGHT_PROFILE;
+            botAvatarHeader.innerHTML = `<img src="${profile}" alt="AI">`;
+        }
+
+        function updateWelcomeIcon() {
+            const videoSrc = isDarkMode ? DARK_VIDEO : LIGHT_VIDEO;
+            welcomeIcon.innerHTML = `
+                <video autoplay loop muted playsinline style="width:100%;height:100%;border-radius:20px;object-fit:cover;">
+                    <source src="${videoSrc}" type="video/mp4">
+                </video>
+            `;
+        }
+
+        function applyTheme(dark) {
+            isDarkMode = dark;
+            if (dark) {
+                body.setAttribute('data-theme', 'dark');
+                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            } else {
+                body.removeAttribute('data-theme');
+                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            }
+            updateBotAvatar();
+            updateWelcomeIcon();
+        }
+
+        const initialDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+        applyTheme(initialDark);
+
+        themeToggle.addEventListener('click', () => {
+            const dark = !body.hasAttribute('data-theme');
+            applyTheme(dark);
+            localStorage.setItem('theme', dark ? 'dark' : 'light');
+        });
+
+        // === MODEL DROPDOWN ===
+        dropdownToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            modelMenu.classList.toggle('show');
+        });
+
+        document.addEventListener('click', () => modelMenu.classList.remove('show'));
+
+        modelMenu.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const item = e.target.closest('.dropdown-item');
+            if (!item) return;
+            currentModel = item.dataset.model;
+            updateModelDisplay();
+            modelMenu.classList.remove('show');
+            showToast('Model Diubah', `Sekarang: ${MODELS[currentModel].desc}`, 'success');
+        });
+
+        function updateModelDisplay() {
+            document.querySelectorAll('.dropdown-item').forEach(el => {
+                el.classList.toggle('active', el.dataset.model === currentModel);
+            });
+            dropdownToggle.title = `Model: ${MODELS[currentModel].desc}`;
+        }
+        updateModelDisplay();
+
+        // === INPUT ===
+        input.addEventListener('input', () => {
+            input.style.height = 'auto';
+            input.style.height = input.scrollHeight + 'px';
+            charCount.textContent = input.value.length;
+            sendBtn.disabled = !input.value.trim();
+        });
+
+        input.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                form.dispatchEvent(new Event('submit'));
+            }
+        });
+
+        newlineBtn.addEventListener('click', () => {
+            const pos = input.selectionStart;
+            input.value = input.value.substring(0, pos) + '\n' + input.value.substring(pos);
+            input.selectionStart = input.selectionEnd = pos + 1;
+            input.dispatchEvent(new Event('input'));
+        });
+
+        // === KIRIM PROMPT LANGSUNG ===
+        function sendPrompt(prompt) {
+            if (!prompt.trim()) return;
+            input.value = prompt;
+            input.dispatchEvent(new Event('input'));
+            form.dispatchEvent(new Event('submit'));
+        }
+
+        document.querySelectorAll('.example-prompt, .prompt-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const prompt = btn.dataset.prompt;
+                if (prompt) {
+                    hideWelcome();
+                    sendPrompt(prompt);
+                }
+            });
+        });
+
+        // === SUBMIT ===
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            const userMessage = input.value.trim();
+            if (!userMessage) return;
+
+            controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+            hideWelcome();
+            const userTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            addMessage(userMessage, 'user');
+            sendToTelegram('Pengguna', userTime, userMessage);
+
+            input.value = ''; input.style.height = 'auto'; charCount.textContent = '0'; sendBtn.disabled = true;
+            showTypingIndicator();
+            const startTime = Date.now();
+
+            try {
+                const botReply = await getResponse(userMessage);
+                clearTimeout(timeoutId);
+                const responseTime = Date.now() - startTime;
+                const botTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                hideTypingIndicator();
+                addMessage(botReply, 'bot');
+                sendToTelegram('Swampy AI', botTime, botReply);
+                updateStats(responseTime);
+                showToast('Sukses', 'Jawaban diterima', 'success');
+            } catch (err) {
+                clearTimeout(timeoutId);
+                hideTypingIndicator();
+                addMessage('Maaf, respons terlambat. Tapi saya tetap jawab: **Coba tanya lagi!**', 'bot');
+                showToast('Timeout', 'Gagal dalam 15 detik', 'error');
+            }
+            sendBtn.disabled = false;
+            input.focus();
+        });
+
+        // === RESPONSE LOGIC (via backend proxy) ===
+        async function getResponse(userMessage) {
+            const lowerMsg = userMessage.toLowerCase().trim();
+
+            const siapaKamuKeywords = [
+                'siapa kamu', 'kamu siapa', 'who are you', 'siapa kamu?', 
+                'kamu siapa?', 'siapa kamu nih', 'kamu siapa nih'
+            ];
+            if (siapaKamuKeywords.some(kw => lowerMsg.includes(kw))) {
+                return `Saya adalah **Swampy AI**, asisten cerdas yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Saya siap bantu kamu coding, belajar, atau ngobrol!`;
+            }
+
+            if (lowerMsg.includes('apa mode') || lowerMsg.includes('model apa') || lowerMsg === 'mode') {
+                return `Saya sedang menggunakan model **${MODELS[currentModel].name}** — *${MODELS[currentModel].desc}*`;
+            }
+
+            const systemPrompt = MODELS[currentModel].prompt;
+            const fullPrompt = `${systemPrompt}\n\nUser: ${userMessage}\nAssistant:`;
+
+            chatHistory.push({ role: 'user', parts: [{ text: fullPrompt }] });
+
+            const payload = {
+                contents: chatHistory.slice(-5),
+                generationConfig: { 
+                    temperature: 0.7, 
+                    maxOutputTokens: 1024, 
+                    topP: 0.8 
+                }
+            };
+
+            try {
+                const res = await fetch(GEMINI_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                    signal: controller?.signal
+                });
+
+                if (!res.ok) {
+                    const err = await res.text();
+                    console.warn('Gemini error:', err);
+                    return `Maaf, saya mengalami gangguan jaringan. Tapi saya tetap bisa bantu! Coba tanya lagi.`;
+                }
+
+                const data = await res.json();
+                const reply = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+                if (!reply || reply === '') {
+                    return `Saya tidak bisa memberikan jawaban lengkap saat ini, tapi saya tetap di sini! Coba ubah pertanyaannya sedikit.`;
+                }
+
+                chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+                if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
+                return reply;
+
+            } catch (err) {
+                if (err.name === 'AbortError') {
+                    return `Waktu habis. Saya coba jawab singkat: **Pertanyaanmu menarik!** Tapi jaringan lambat. Coba lagi ya!`;
+                }
+                return `Saya mengalami error teknis. Tapi tenang, saya masih bisa bantu! Coba tanya sesuatu yang lain.`;
+            }
+        }
+
+        // === ADD MESSAGE DENGAN LIKE & DISLIKE ===
+        function addMessage(text, sender) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `message-wrapper ${sender}`;
+            const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+            const profile = sender === 'user' 
+                ? `<div class="message-avatar user"><i class="fas fa-user"></i></div>` 
+                : `<div class="message-avatar bot"><img src="${isDarkMode ? DARK_PROFILE : LIGHT_PROFILE}" alt="AI"></div>`;
+
+            const feedbackButtons = sender === 'bot' ? `
+                <div class="message-actions">
+                    <button class="message-action feedback-btn like-btn" onclick="sendFeedback(this, 'like')">
+                        <i class="fas fa-thumbs-up"></i> Suka
+                    </button>
+                    <button class="message-action feedback-btn dislike-btn" onclick="sendFeedback(this, 'dislike')">
+                        <i class="fas fa-thumbs-down"></i> Tidak Suka
+                    </button>
+                    <button class="message-action copy-btn" onclick="copyMessage(this)">
+                        <i class="fas fa-copy"></i> Salin
+                    </button>
+                </div>
+            ` : '';
+
+            wrapper.innerHTML = `
+                ${profile}
+                <div class="message-content">
+                    <div class="message-header">
+                        <span>${sender === 'user' ? 'Kamu' : 'Swampy AI'}</span>
+                        <span>•</span>
+                        <span>${time}</span>
+                    </div>
+                    <div class="message-bubble ${sender}">${formatMessage(text)}</div>
+                    ${feedbackButtons}
+                </div>
+            `;
+            chatbox.appendChild(wrapper);
+            chatbox.scrollTop = chatbox.scrollHeight;
+            messageCount++;
+            updateMessageCount();
+        }
+
+        // === FEEDBACK FUNCTION ===
+        window.sendFeedback = function(btn, type) {
+            const likeBtn = btn.closest('.message-actions').querySelector('.like-btn');
+            const dislikeBtn = btn.closest('.message-actions').querySelector('.dislike-btn');
+
+            likeBtn.classList.remove('liked');
+            dislikeBtn.classList.remove('disliked');
+
+            if (type === 'like') {
+                likeBtn.classList.add('liked');
+                showToast('Terima Kasih!', 'Kamu suka jawaban ini', 'success');
+                sendToTelegram('Feedback', new Date().toLocaleTimeString(), 'User menyukai jawaban');
+            } else {
+                dislikeBtn.classList.add('disliked');
+                showToast('Maaf', 'Kami akan perbaiki jawaban berikutnya', 'error');
+                sendToTelegram('Feedback', new Date().toLocaleTimeString(), 'User tidak suka jawaban');
+            }
+
+            likeBtn.disabled = true;
+            dislikeBtn.disabled = true;
+        };
+
+        // === FORMAT, COPY, TYPING, STATS, TOAST ===
+        function formatMessage(text) {
+            const escapeHtml = str => { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; };
+            const codeBlocks = [];
+            let processedText = text;
+
+            processedText = processedText.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+                const language = lang || 'text';
+                const codeId = 'code-' + Math.random().toString(36).substr(2, 9);
+                const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+                codeBlocks.push(`
+                    <div class="code-block">
+                        <div class="code-header">
+                            <span class="code-language">${escapeHtml(language)}</span>
+                            <button class="code-copy-btn" onclick="copyCode('${codeId}')">
+                                <i class="fas fa-copy"></i> Salin
+                            </button>
+                        </div>
+                        <div class="code-content">
+                            <pre><code id="${codeId}">${escapeHtml(code.trim())}</code></pre>
+                        </div>
+                    </div>
+                `);
+                return placeholder;
+            });
+
+            processedText = processedText.replace(/\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/g, (match, title, url) => {
+                return `<a href="${url.trim()}" target="_blank" rel="noopener noreferrer" class="message-link">${escapeHtml(title.trim())}</a>`;
+            });
+
+            processedText = processedText.replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>');
+            processedText = processedText.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            processedText = processedText.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            processedText = processedText.replace(/\n/g, '<br>');
+
+            codeBlocks.forEach((block, i) => {
+                processedText = processedText.replace(`__CODE_BLOCK_${i}__`, block);
+            });
+
+            return processedText;
+        }
+
+        window.copyCode = async function(id) {
+            const el = document.getElementById(id);
+            const btn = el.closest('.code-block').querySelector('.code-copy-btn');
+            const text = el.textContent;
+            const orig = btn.innerHTML;
+            try {
+                await navigator.clipboard.writeText(text);
+                btn.innerHTML = '<i class="fas fa-check"></i> Tersalin';
+                btn.classList.add('copied');
+                setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+            } catch { showToast('Error', 'Gagal menyalin', 'error'); }
+        };
+
+        window.copyMessage = async function(btn) {
+            const text = btn.closest('.message-content').querySelector('.message-bubble').innerText;
+            const orig = btn.innerHTML;
+            try {
+                await navigator.clipboard.writeText(text);
+                btn.innerHTML = '<i class="fas fa-check"></i> Tersalin';
+                setTimeout(() => btn.innerHTML = orig, 2000);
+            } catch { showToast('Error', 'Gagal menyalin', 'error'); }
+        };
+
+        function showTypingIndicator() {
+            const el = document.createElement('div');
+            el.className = 'typing-indicator';
+            el.id = 'typingIndicator';
+            el.innerHTML = `
+                <div class="message-avatar bot"><img src="${isDarkMode ? DARK_PROFILE : LIGHT_PROFILE}" alt="AI"></div>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatbox.appendChild(el);
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const el = document.getElementById('typingIndicator');
+            if (el) el.remove();
+        }
+
+        function hideWelcome() { welcomeScreen.style.display = 'none'; }
+
+        clearChatBtn.addEventListener('click', () => {
+            if (confirm('Hapus semua pesan?')) {
+                chatbox.innerHTML = '';
+                welcomeScreen.style.display = 'flex';
+                messageCount = 0; responseTimes = []; chatHistory = [];
+                updateMessageCount(); updateAvgResponse();
+                showToast('Dibersihkan', 'Riwayat dihapus', 'success');
+            }
+        });
+
+        exportChatBtn.addEventListener('click', () => {
+            let text = 'Swampy AI Chat Export\n' + '='.repeat(50) + '\n\n';
+            chatbox.querySelectorAll('.message-wrapper').forEach(m => {
+                const sender = m.classList.contains('user') ? 'Kamu' : 'Swampy AI';
+                const msg = m.querySelector('.message-bubble').innerText;
+                const time = m.querySelector('.message-header').innerText;
+                text += `[${time}] ${sender}:\n${msg}\n\n`;
+            });
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `swampy-chat-${Date.now()}.txt`; a.click();
+            URL.revokeObjectURL(url);
+            showToast('Diexport', 'Chat diunduh', 'success');
+        });
+
+        function updateStats(time) { responseTimes.push(time); updateAvgResponse(); }
+        function updateMessageCount() { document.getElementById('messageCount').textContent = messageCount; }
+        function updateAvgResponse() {
+            const avg = responseTimes.length ? (responseTimes.reduce((a,b) => a+b, 0) / responseTimes.length / 1000).toFixed(1) + 's' : '-';
+            document.getElementById('avgResponse').textContent = avg;
+        }
+
+        setInterval(() => {
+            const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
+            const m = Math.floor(elapsed / 60);
+            const s = (elapsed % 60).toString().padStart(2, '0');
+            document.getElementById('sessionTime').textContent = `${m}:${s}`;
+        }, 1000);
+
+        function showToast(title, msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = toast.querySelector('.toast-icon');
+            toast.querySelector('.toast-title').textContent = title;
+            toast.querySelector('.toast-message').textContent = msg;
+            icon.className = `toast-icon ${type}`;
+            icon.innerHTML = type === 'success' 
+                ? '<i class="fas fa-check"></i>' 
+                : '<i class="fas fa-times"></i>';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        input.focus();
+    </script>
+</body>
+</html>
