@@ -1,6 +1,5 @@
 // SwampAI/middleware.js
 import { NextResponse } from 'next/server';
-import { get } from '@vercel/edge-config';
 
 export async function middleware(req) {
   const path = req.nextUrl.pathname;
@@ -10,7 +9,8 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
-  const isMaintenance = await get('isMaintenance');
+  // Baca dari env (Vercel)
+  const isMaintenance = process.env.IS_MAINTENANCE === 'true';
 
   if (isMaintenance) {
     const url = req.nextUrl.clone();
