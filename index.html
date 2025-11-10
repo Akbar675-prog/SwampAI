@@ -12,6 +12,9 @@
     <link rel="icon" href="https://od.lk/s/OTlfNzQzOTkyMjdf/Screenshot_20251109_114139_CapCut.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
+    <!-- Google OAuth Client -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -943,487 +946,529 @@
     </div>
 
     <script>
-      // === MODEL SYSTEM ===
-const MODELS = {
-    'lumen': { name: 'Lumen', desc: 'Kreatif & Penerang', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'echo': { name: 'Echo', desc: 'Ringkas & Jelas', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'pulse': { name: 'Pulse', desc: 'Interaktif & Enerjik', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'aether': { name: 'Aether', desc: 'Profesional & Formal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'cipher': { name: 'Cipher', desc: 'Master Kode', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'drift': { name: 'Drift', desc: 'Santai & Ramah', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'flux': { name: 'Flux', desc: 'Adaptif & Fleksibel', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'zenith': { name: 'Zenith', desc: 'Pro Maksimal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'spectra': { name: 'Spectra', desc: 'Serba Guna', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' }
-};
-
-let currentModel = 'lumen';
-
-// === API ENDPOINTS (Backend Proxy) ===
-const GEMINI_ENDPOINT = '/api/gemini';
-const TELEGRAM_ENDPOINT = '/api/telegram';
-
-const LIGHT_PROFILE = 'https://files.catbox.moe/y8tb6l.png';
-const DARK_PROFILE  = 'https://files.catbox.moe/3p6brz.png';
-const LIGHT_VIDEO   = 'src/video/thumbLight.mp4';
-const DARK_VIDEO    = 'src/video/thumbDark.mp4';
-
-// === TELEGRAM MONITORING (via backend) ===
-async function sendToTelegram(sender, time, message) {
-    const cleanMsg = message
-        .replace(/<[^>]*>/g, '')
-        .replace(/\*\*/g, '*')
-        .replace(/```[\s\S]*?```/g, '(kode)')
-        .replace(/`([^`]+)`/g, '`$1`');
-    const text = `${sender} • ${time}\n${cleanMsg}`;
-    try {
-        await fetch(TELEGRAM_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, parse_mode: 'Markdown' })
-        });
-    } catch (err) {
-        console.warn('Telegram gagal:', err);
-    }
-}
-
-// === ELEMENTS ===
-const botAvatarHeader = document.getElementById('botAvatar');
-const welcomeIcon     = document.getElementById('welcomeIcon');
-const modelDropdown   = document.getElementById('modelDropdown');
-const modelMenu       = document.getElementById('modelMenu');
-const dropdownToggle  = modelDropdown.querySelector('.dropdown-toggle');
-const chatbox = document.getElementById('chatbox');
-const form = document.getElementById('chatForm');
-const input = document.getElementById('userMessage');
-const sendBtn = document.getElementById('sendBtn');
-const newlineBtn = document.getElementById('newlineBtn');
-const charCount = document.getElementById('charCount');
-const welcomeScreen = document.getElementById('welcomeScreen');
-const clearChatBtn = document.getElementById('clearChat');
-const exportChatBtn = document.getElementById('exportChat');
-const themeToggle = document.getElementById('themeToggle');
-
-let messageCount = 0;
-let responseTimes = [];
-let sessionStart = Date.now();
-let chatHistory = [];
-let controller = null;
-let isDarkMode = false;
-
-// === TEMA ===
-const body = document.body;
-const savedTheme = localStorage.getItem('theme');
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-function updateBotAvatar() {
-    const profile = isDarkMode ? DARK_PROFILE : LIGHT_PROFILE;
-    botAvatarHeader.innerHTML = `<img src="${profile}" alt="AI">`;
-}
-
-function updateWelcomeIcon() {
-    const videoSrc = isDarkMode ? DARK_VIDEO : LIGHT_VIDEO;
-    welcomeIcon.innerHTML = `
-        <video autoplay loop muted playsinline style="width:100%;height:100%;border-radius:20px;object-fit:cover;">
-            <source src="${videoSrc}" type="video/mp4">
-        </video>
-    `;
-}
-
-function applyTheme(dark) {
-    isDarkMode = dark;
-    if (dark) {
-        body.setAttribute('data-theme', 'dark');
-        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-    } else {
-        body.removeAttribute('data-theme');
-        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-    }
-    updateBotAvatar();
-    updateWelcomeIcon();
-}
-
-const initialDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
-applyTheme(initialDark);
-
-themeToggle.addEventListener('click', () => {
-    const dark = !body.hasAttribute('data-theme');
-    applyTheme(dark);
-    localStorage.setItem('theme', dark ? 'dark' : 'light');
-});
-
-// === MODEL DROPDOWN ===
-dropdownToggle.addEventListener('click', (e) => {
-    e.stopPropagation();
-    modelMenu.classList.toggle('show');
-});
-
-document.addEventListener('click', () => modelMenu.classList.remove('show'));
-
-modelMenu.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const item = e.target.closest('.dropdown-item');
-    if (!item) return;
-    currentModel = item.dataset.model;
-    updateModelDisplay();
-    modelMenu.classList.remove('show');
-    showToast('Model Diubah', `Sekarang: ${MODELS[currentModel].desc}`, 'success');
-});
-
-function updateModelDisplay() {
-    document.querySelectorAll('.dropdown-item').forEach(el => {
-        el.classList.toggle('active', el.dataset.model === currentModel);
-    });
-    dropdownToggle.title = `Model: ${MODELS[currentModel].desc}`;
-}
-updateModelDisplay();
-
-// === INPUT ===
-input.addEventListener('input', () => {
-    input.style.height = 'auto';
-    input.style.height = input.scrollHeight + 'px';
-    charCount.textContent = input.value.length;
-    sendBtn.disabled = !input.value.trim();
-});
-
-input.addEventListener('keydown', e => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        form.dispatchEvent(new Event('submit'));
-    }
-});
-
-newlineBtn.addEventListener('click', () => {
-    const pos = input.selectionStart;
-    input.value = input.value.substring(0, pos) + '\n' + input.value.substring(pos);
-    input.selectionStart = input.selectionEnd = pos + 1;
-    input.dispatchEvent(new Event('input'));
-});
-
-// === KIRIM PROMPT LANGSUNG ===
-function sendPrompt(prompt) {
-    if (!prompt.trim()) return;
-    input.value = prompt;
-    input.dispatchEvent(new Event('input'));
-    form.dispatchEvent(new Event('submit'));
-}
-
-document.querySelectorAll('.example-prompt, .prompt-chip').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const prompt = btn.dataset.prompt;
-        if (prompt) {
-            hideWelcome();
-            sendPrompt(prompt);
-        }
-    });
-});
-
-// === SUBMIT ===
-form.addEventListener('submit', async e => {
-    e.preventDefault();
-    const userMessage = input.value.trim();
-    if (!userMessage) return;
-
-    controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-    hideWelcome();
-    const userTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-    addMessage(userMessage, 'user');
-    sendToTelegram('Pengguna', userTime, userMessage);
-
-    input.value = ''; input.style.height = 'auto'; charCount.textContent = '0'; sendBtn.disabled = true;
-    showTypingIndicator();
-    const startTime = Date.now();
-
-    try {
-        const botReply = await getResponse(userMessage);
-        clearTimeout(timeoutId);
-        const responseTime = Date.now() - startTime;
-        const botTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-        hideTypingIndicator();
-        addMessage(botReply, 'bot');
-        sendToTelegram('Swampy AI', botTime, botReply);
-        updateStats(responseTime);
-        showToast('Sukses', 'Jawaban diterima', 'success');
-    } catch (err) {
-        clearTimeout(timeoutId);
-        hideTypingIndicator();
-        addMessage('Maaf, respons terlambat. Tapi saya tetap jawab: **Coba tanya lagi!**', 'bot');
-        showToast('Timeout', 'Gagal dalam 15 detik', 'error');
-    }
-    sendBtn.disabled = false;
-    input.focus();
-});
-
-// === RESPONSE LOGIC (via backend proxy) ===
-async function getResponse(userMessage) {
-    const lowerMsg = userMessage.toLowerCase().trim();
-
-    const siapaKamuKeywords = [
-        'siapa kamu', 'kamu siapa', 'who are you', 'siapa kamu?', 
-        'kamu siapa?', 'siapa kamu nih', 'kamu siapa nih'
-    ];
-    if (siapaKamuKeywords.some(kw => lowerMsg.includes(kw))) {
-        return `Saya adalah **Swampy AI**, asisten cerdas yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Saya siap bantu kamu coding, belajar, atau ngobrol!`;
-    }
-
-    if (lowerMsg.includes('apa mode') || lowerMsg.includes('model apa') || lowerMsg === 'mode') {
-        return `Saya sedang menggunakan model **${MODELS[currentModel].name}** — *${MODELS[currentModel].desc}*`;
-    }
-
-    const systemPrompt = MODELS[currentModel].prompt;
-    const fullPrompt = `${systemPrompt}\n\nUser: ${userMessage}\nAssistant:`;
-
-    chatHistory.push({ role: 'user', parts: [{ text: fullPrompt }] });
-
-    const payload = {
-        contents: chatHistory.slice(-5),
-        generationConfig: { 
-            temperature: 0.7, 
-            maxOutputTokens: 1024, 
-            topP: 0.8 
-        }
+    // === MODEL SYSTEM (SEMUA MODEL SAMA) ===
+    const MODELS = {
+        'lumen': { name: 'Lumen', desc: 'Kreatif & Penerang', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+        'echo': { name: 'Echo', desc: 'Ringkas & Jelas', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+        'pulse': { name: 'Pulse', desc: 'Interaktif & Enerjik', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+        'aether': { name: 'Aether', desc: 'Profesional & Formal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+        'cipher': { name: 'Cipher', desc: 'Master Kode', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+        'drift': { name: 'Drift', desc: 'Santai & Ramah', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+        'flux': { name: 'Flux', desc: 'Adaptif & Fleksibel', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+        'zenith': { name: 'Zenith', desc: 'Pro Maksimal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+        'spectra': { name: 'Spectra', desc: 'Serba Guna', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' }
     };
 
-    try {
-        const res = await fetch(GEMINI_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            signal: controller?.signal
+    let currentModel = 'lumen';
+
+    // === API ENDPOINTS (Backend Proxy) ===
+    const GEMINI_ENDPOINT = '/api/gemini';
+    const TELEGRAM_ENDPOINT = '/api/telegram';
+
+    const LIGHT_PROFILE = 'https://files.catbox.moe/y8tb6l.png';
+    const DARK_PROFILE  = 'https://files.catbox.moe/3p6brz.png';
+    const LIGHT_VIDEO   = 'src/video/thumbLight.mp4';
+    const DARK_VIDEO    = 'src/video/thumbDark.mp4';
+
+    // === GOOGLE OAUTH CONFIG ===
+    const GOOGLE_CLIENT_ID = '980283068707-3oojul9acddv5ets13k0393uo202kv6v.apps.googleusercontent.com'; // GANTI DENGAN CLIENT ID ANDA
+    const REDIRECT_URI = encodeURIComponent(window.location.href);
+    const GOOGLE_OAUTH_URL = `https://accounts.google.com/o/oauth2/v2/auth?` +
+        `client_id=${GOOGLE_CLIENT_ID}&` +
+        `redirect_uri=${REDIRECT_URI}&` +
+        `response_type=token&` +
+        `scope=${encodeURIComponent('email profile openid')}&` +
+        `prompt=select_account`;
+
+    const GOOGLE_LOGIN_KEYWORDS = [
+        'login google', 'google login', 'masuk google', 'sign in google',
+        'i want login with my google account', 'login dengan akun google',
+        'login pakai google', 'google sign in', 'oauth google', 'masuk pakai google',
+        'google account login', 'login akun google', 'google oauth'
+    ];
+
+    function isGoogleLoginRequest(message) {
+        const lower = message.toLowerCase().trim();
+        return GOOGLE_LOGIN_KEYWORDS.some(kw => lower.includes(kw));
+    }
+
+    // === TELEGRAM MONITORING (via backend) ===
+    async function sendToTelegram(sender, time, message) {
+        const cleanMsg = message
+            .replace(/<[^>]*>/g, '')
+            .replace(/\*\*/g, '*')
+            .replace(/```[\s\S]*?```/g, '(kode)')
+            .replace(/`([^`]+)`/g, '`$1`');
+        const text = `${sender} • ${time}\n${cleanMsg}`;
+        try {
+            await fetch(TELEGRAM_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text, parse_mode: 'Markdown' })
+            });
+        } catch (err) {
+            console.warn('Telegram gagal:', err);
+        }
+    }
+
+    // === ELEMENTS ===
+    const botAvatarHeader = document.getElementById('botAvatar');
+    const welcomeIcon     = document.getElementById('welcomeIcon');
+    const modelDropdown   = document.getElementById('modelDropdown');
+    const modelMenu       = document.getElementById('modelMenu');
+    const dropdownToggle  = modelDropdown.querySelector('.dropdown-toggle');
+    const chatbox = document.getElementById('chatbox');
+    const form = document.getElementById('chatForm');
+    const input = document.getElementById('userMessage');
+    const sendBtn = document.getElementById('sendBtn');
+    const newlineBtn = document.getElementById('newlineBtn');
+    const charCount = document.getElementById('charCount');
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const clearChatBtn = document.getElementById('clearChat');
+    const exportChatBtn = document.getElementById('exportChat');
+    const themeToggle = document.getElementById('themeToggle');
+
+    let messageCount = 0;
+    let responseTimes = [];
+    let sessionStart = Date.now();
+    let chatHistory = [];
+    let controller = null;
+    let isDarkMode = false;
+
+    // === TEMA ===
+    const body = document.body;
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    function updateBotAvatar() {
+        const profile = isDarkMode ? DARK_PROFILE : LIGHT_PROFILE;
+        botAvatarHeader.innerHTML = `<img src="${profile}" alt="AI">`;
+    }
+
+    function updateWelcomeIcon() {
+        const videoSrc = isDarkMode ? DARK_VIDEO : LIGHT_VIDEO;
+        welcomeIcon.innerHTML = `
+            <video autoplay loop muted playsinline style="width:100%;height:100%;border-radius:20px;object-fit:cover;">
+                <source src="${videoSrc}" type="video/mp4">
+            </video>
+        `;
+    }
+
+    function applyTheme(dark) {
+        isDarkMode = dark;
+        if (dark) {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        } else {
+            body.removeAttribute('data-theme');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        updateBotAvatar();
+        updateWelcomeIcon();
+    }
+
+    const initialDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+    applyTheme(initialDark);
+
+    themeToggle.addEventListener('click', () => {
+        const dark = !body.hasAttribute('data-theme');
+        applyTheme(dark);
+        localStorage.setItem('theme', dark ? 'dark' : 'light');
+    });
+
+    // === MODEL DROPDOWN ===
+    dropdownToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        modelMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', () => modelMenu.classList.remove('show'));
+
+    modelMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const item = e.target.closest('.dropdown-item');
+        if (!item) return;
+        currentModel = item.dataset.model;
+        updateModelDisplay();
+        modelMenu.classList.remove('show');
+        showToast('Model Diubah', `Sekarang: ${MODELS[currentModel].desc}`, 'success');
+    });
+
+    function updateModelDisplay() {
+        document.querySelectorAll('.dropdown-item').forEach(el => {
+            el.classList.toggle('active', el.dataset.model === currentModel);
+        });
+        dropdownToggle.title = `Model: ${MODELS[currentModel].desc}`;
+    }
+    updateModelDisplay();
+
+    // === INPUT ===
+    input.addEventListener('input', () => {
+        input.style.height = 'auto';
+        input.style.height = input.scrollHeight + 'px';
+        charCount.textContent = input.value.length;
+        sendBtn.disabled = !input.value.trim();
+    });
+
+    input.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            form.dispatchEvent(new Event('submit'));
+        }
+    });
+
+    newlineBtn.addEventListener('click', () => {
+        const pos = input.selectionStart;
+        input.value = input.value.substring(0, pos) + '\n' + input.value.substring(pos);
+        input.selectionStart = input.selectionEnd = pos + 1;
+        input.dispatchEvent(new Event('input'));
+    });
+
+    // === KIRIM PROMPT LANGSUNG ===
+    function sendPrompt(prompt) {
+        if (!prompt.trim()) return;
+        input.value = prompt;
+        input.dispatchEvent(new Event('input'));
+        form.dispatchEvent(new Event('submit'));
+    }
+
+    document.querySelectorAll('.example-prompt, .prompt-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const prompt = btn.dataset.prompt;
+            if (prompt) {
+                hideWelcome();
+                sendPrompt(prompt);
+            }
+        });
+    });
+
+    // === SUBMIT (dengan Google Login) ===
+    form.addEventListener('submit', async e => {
+        e.preventDefault();
+        const userMessage = input.value.trim();
+        if (!userMessage) return;
+
+        // === CEK GOOGLE LOGIN ===
+        if (isGoogleLoginRequest(userMessage)) {
+            hideWelcome();
+            const userTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            addMessage(userMessage, 'user');
+            sendToTelegram('Pengguna', userTime, userMessage);
+
+            input.value = ''; input.style.height = 'auto'; charCount.textContent = '0'; sendBtn.disabled = true;
+
+            addMessage('Mengarahkan ke login Google...', 'bot');
+            showToast('Login Google', 'Membuka Google OAuth...', 'success');
+
+            setTimeout(() => {
+                window.location.href = GOOGLE_OAUTH_URL;
+            }, 1200);
+
+            return;
+        }
+
+        // === PROSES NORMAL ===
+        controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+        hideWelcome();
+        const userTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        addMessage(userMessage, 'user');
+        sendToTelegram('Pengguna', userTime, userMessage);
+
+        input.value = ''; input.style.height = 'auto'; charCount.textContent = '0'; sendBtn.disabled = true;
+        showTypingIndicator();
+        const startTime = Date.now();
+
+        try {
+            const botReply = await getResponse(userMessage);
+            clearTimeout(timeoutId);
+            const responseTime = Date.now() - startTime;
+            const botTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            hideTypingIndicator();
+            addMessage(botReply, 'bot');
+            sendToTelegram('Swampy AI', botTime, botReply);
+            updateStats(responseTime);
+            showToast('Sukses', 'Jawaban diterima', 'success');
+        } catch (err) {
+            clearTimeout(timeoutId);
+            hideTypingIndicator();
+            addMessage('Maaf, respons terlambat. Tapi saya tetap jawab: **Coba tanya lagi!**', 'bot');
+            showToast('Timeout', 'Gagal dalam 15 detik', 'error');
+        }
+        sendBtn.disabled = false;
+        input.focus();
+    });
+
+    // === RESPONSE LOGIC ===
+    async function getResponse(userMessage) {
+        const lowerMsg = userMessage.toLowerCase().trim();
+
+        const siapaKamuKeywords = [
+            'siapa kamu', 'kamu siapa', 'who are you', 'siapa kamu?', 
+            'kamu siapa?', 'siapa kamu nih', 'kamu siapa nih'
+        ];
+        if (siapaKamuKeywords.some(kw => lowerMsg.includes(kw))) {
+            return `Saya adalah **Swampy AI**, asisten cerdas yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Saya siap bantu kamu coding, belajar, atau ngobrol!`;
+        }
+
+        if (lowerMsg.includes('apa mode') || lowerMsg.includes('model apa') || lowerMsg === 'mode') {
+            return `Saya sedang menggunakan model **${MODELS[currentModel].name}** — *${MODELS[currentModel].desc}*`;
+        }
+
+        const systemPrompt = MODELS[currentModel].prompt;
+        const fullPrompt = `${systemPrompt}\n\nUser: ${userMessage}\nAssistant:`;
+
+        chatHistory.push({ role: 'user', parts: [{ text: fullPrompt }] });
+
+        const payload = {
+            contents: chatHistory.slice(-5),
+            generationConfig: { 
+                temperature: 0.7, 
+                maxOutputTokens: 1024, 
+                topP: 0.8 
+            }
+        };
+
+        try {
+            const res = await fetch(GEMINI_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller?.signal
+            });
+
+            if (!res.ok) {
+                const err = await res.text();
+                console.warn('Gemini error:', err);
+                return `Maaf, saya mengalami gangguan jaringan. Tapi saya tetap bisa bantu! Coba tanya lagi.`;
+            }
+
+            const data = await res.json();
+            const reply = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+            if (!reply || reply === '') {
+                return `Saya tidak bisa memberikan jawaban lengkap saat ini, tapi saya tetap di sini! Coba ubah pertanyaannya sedikit.`;
+            }
+
+            chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+            if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
+            return reply;
+
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                return `Waktu habis. Saya coba jawab singkat: **Pertanyaanmu menarik!** Tapi jaringan lambat. Coba lagi ya!`;
+            }
+            return `Saya mengalami error teknis. Tapi tenang, saya masih bisa bantu! Coba tanya sesuatu yang lain.`;
+        }
+    }
+
+    // === ADD MESSAGE DENGAN LIKE & DISLIKE ===
+    function addMessage(text, sender) {
+        const wrapper = document.createElement('div');
+        wrapper.className = `message-wrapper ${sender}`;
+        const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+        const profile = sender === 'user' 
+            ? `<div class="message-avatar user"><i class="fas fa-user"></i></div>` 
+            : `<div class="message-avatar bot"><img src="${isDarkMode ? DARK_PROFILE : LIGHT_PROFILE}" alt="AI"></div>`;
+
+        const feedbackButtons = sender === 'bot' ? `
+            <div class="message-actions">
+                <button class="message-action feedback-btn like-btn" onclick="sendFeedback(this, 'like')">
+                    <i class="fas fa-thumbs-up"></i> Suka
+                </button>
+                <button class="message-action feedback-btn dislike-btn" onclick="sendFeedback(this, 'dislike')">
+                    <i class="fas fa-thumbs-down"></i> Tidak Suka
+                </button>
+                <button class="message-action copy-btn" onclick="copyMessage(this)">
+                    <i class="fas fa-copy"></i> Salin
+                </button>
+            </div>
+        ` : '';
+
+        wrapper.innerHTML = `
+            ${profile}
+            <div class="message-content">
+                <div class="message-header">
+                    <span>${sender === 'user' ? 'Kamu' : 'Swampy AI'}</span>
+                    <span>•</span>
+                    <span>${time}</span>
+                </div>
+                <div class="message-bubble ${sender}">${formatMessage(text)}</div>
+                ${feedbackButtons}
+            </div>
+        `;
+        chatbox.appendChild(wrapper);
+        chatbox.scrollTop = chatbox.scrollHeight;
+        messageCount++;
+        updateMessageCount();
+    }
+
+    // === FEEDBACK FUNCTION ===
+    window.sendFeedback = function(btn, type) {
+        const likeBtn = btn.closest('.message-actions').querySelector('.like-btn');
+        const dislikeBtn = btn.closest('.message-actions').querySelector('.dislike-btn');
+
+        likeBtn.classList.remove('liked');
+        dislikeBtn.classList.remove('disliked');
+
+        if (type === 'like') {
+            likeBtn.classList.add('liked');
+            showToast('Terima Kasih!', 'Kamu suka jawaban ini', 'success');
+            sendToTelegram('Feedback', new Date().toLocaleTimeString(), 'User menyukai jawaban');
+        } else {
+            dislikeBtn.classList.add('disliked');
+            showToast('Maaf', 'Kami akan perbaiki jawaban berikutnya', 'error');
+            sendToTelegram('Feedback', new Date().toLocaleTimeString(), 'User tidak suka jawaban');
+        }
+
+        likeBtn.disabled = true;
+        dislikeBtn.disabled = true;
+    };
+
+    // === FORMAT, COPY, TYPING, STATS, TOAST ===
+    function formatMessage(text) {
+        const escapeHtml = str => { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; };
+        const codeBlocks = [];
+        let processedText = text;
+
+        processedText = processedText.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+            const language = lang || 'text';
+            const codeId = 'code-' + Math.random().toString(36).substr(2, 9);
+            const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+            codeBlocks.push(`
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-language">${escapeHtml(language)}</span>
+                        <button class="code-copy-btn" onclick="copyCode('${codeId}')">
+                            <i class="fas fa-copy"></i> Salin
+                        </button>
+                    </div>
+                    <div class="code-content">
+                        <pre><code id="${codeId}">${escapeHtml(code.trim())}</code></pre>
+                    </div>
+                </div>
+            `);
+            return placeholder;
         });
 
-        if (!res.ok) {
-            const err = await res.text();
-            console.warn('Gemini error:', err);
-            return `Maaf, saya mengalami gangguan jaringan. Tapi saya tetap bisa bantu! Coba tanya lagi.`;
-        }
+        processedText = processedText.replace(/\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/g, (match, title, url) => {
+            return `<a href="${url.trim()}" target="_blank" rel="noopener noreferrer" class="message-link">${escapeHtml(title.trim())}</a>`;
+        });
 
-        const data = await res.json();
-        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+        processedText = processedText.replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>');
+        processedText = processedText.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        processedText = processedText.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        processedText = processedText.replace(/\n/g, '<br>');
 
-        if (!reply || reply === '') {
-            return `Saya tidak bisa memberikan jawaban lengkap saat ini, tapi saya tetap di sini! Coba ubah pertanyaannya sedikit.`;
-        }
+        codeBlocks.forEach((block, i) => {
+            processedText = processedText.replace(`__CODE_BLOCK_${i}__`, block);
+        });
 
-        chatHistory.push({ role: 'model', parts: [{ text: reply }] });
-        if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
-        return reply;
-
-    } catch (err) {
-        if (err.name === 'AbortError') {
-            return `Waktu habis. Saya coba jawab singkat: **Pertanyaanmu menarik!** Tapi jaringan lambat. Coba lagi ya!`;
-        }
-        return `Saya mengalami error teknis. Tapi tenang, saya masih bisa bantu! Coba tanya sesuatu yang lain.`;
+        return processedText;
     }
-}
 
-// === ADD MESSAGE DENGAN LIKE & DISLIKE ===
-function addMessage(text, sender) {
-    const wrapper = document.createElement('div');
-    wrapper.className = `message-wrapper ${sender}`;
-    const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    window.copyCode = async function(id) {
+        const el = document.getElementById(id);
+        const btn = el.closest('.code-block').querySelector('.code-copy-btn');
+        const text = el.textContent;
+        const orig = btn.innerHTML;
+        try {
+            await navigator.clipboard.writeText(text);
+            btn.innerHTML = '<i class="fas fa-check"></i> Tersalin';
+            btn.classList.add('copied');
+            setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+        } catch { showToast('Error', 'Gagal menyalin', 'error'); }
+    };
 
-    const profile = sender === 'user' 
-        ? `<div class="message-avatar user"><i class="fas fa-user"></i></div>` 
-        : `<div class="message-avatar bot"><img src="${isDarkMode ? DARK_PROFILE : LIGHT_PROFILE}" alt="AI"></div>`;
+    window.copyMessage = async function(btn) {
+        const text = btn.closest('.message-content').querySelector('.message-bubble').innerText;
+        const orig = btn.innerHTML;
+        try {
+            await navigator.clipboard.writeText(text);
+            btn.innerHTML = '<i class="fas fa-check"></i> Tersalin';
+            setTimeout(() => btn.innerHTML = orig, 2000);
+        } catch { showToast('Error', 'Gagal menyalin', 'error'); }
+    };
 
-    const feedbackButtons = sender === 'bot' ? `
-        <div class="message-actions">
-            <button class="message-action feedback-btn like-btn" onclick="sendFeedback(this, 'like')">
-                <i class="fas fa-thumbs-up"></i> Suka
-            </button>
-            <button class="message-action feedback-btn dislike-btn" onclick="sendFeedback(this, 'dislike')">
-                <i class="fas fa-thumbs-down"></i> Tidak Suka
-            </button>
-            <button class="message-action copy-btn" onclick="copyMessage(this)">
-                <i class="fas fa-copy"></i> Salin
-            </button>
-        </div>
-    ` : '';
-
-    wrapper.innerHTML = `
-        ${profile}
-        <div class="message-content">
-            <div class="message-header">
-                <span>${sender === 'user' ? 'Kamu' : 'Swampy AI'}</span>
-                <span>•</span>
-                <span>${time}</span>
+    function showTypingIndicator() {
+        const el = document.createElement('div');
+        el.className = 'typing-indicator';
+        el.id = 'typingIndicator';
+        el.innerHTML = `
+            <div class="message-avatar bot"><img src="${isDarkMode ? DARK_PROFILE : LIGHT_PROFILE}" alt="AI"></div>
+            <div class="typing-dots">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
             </div>
-            <div class="message-bubble ${sender}">${formatMessage(text)}</div>
-            ${feedbackButtons}
-        </div>
-    `;
-    chatbox.appendChild(wrapper);
-    chatbox.scrollTop = chatbox.scrollHeight;
-    messageCount++;
-    updateMessageCount();
-}
-
-// === FEEDBACK FUNCTION ===
-window.sendFeedback = function(btn, type) {
-    const likeBtn = btn.closest('.message-actions').querySelector('.like-btn');
-    const dislikeBtn = btn.closest('.message-actions').querySelector('.dislike-btn');
-
-    likeBtn.classList.remove('liked');
-    dislikeBtn.classList.remove('disliked');
-
-    if (type === 'like') {
-        likeBtn.classList.add('liked');
-        showToast('Terima Kasih!', 'Kamu suka jawaban ini', 'success');
-        sendToTelegram('Feedback', new Date().toLocaleTimeString(), 'User menyukai jawaban');
-    } else {
-        dislikeBtn.classList.add('disliked');
-        showToast('Maaf', 'Kami akan perbaiki jawaban berikutnya', 'error');
-        sendToTelegram('Feedback', new Date().toLocaleTimeString(), 'User tidak suka jawaban');
+        `;
+        chatbox.appendChild(el);
+        chatbox.scrollTop = chatbox.scrollHeight;
     }
 
-    likeBtn.disabled = true;
-    dislikeBtn.disabled = true;
-};
-
-// === FORMAT, COPY, TYPING, STATS, TOAST ===
-function formatMessage(text) {
-    const escapeHtml = str => { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; };
-    const codeBlocks = [];
-    let processedText = text;
-
-    processedText = processedText.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-        const language = lang || 'text';
-        const codeId = 'code-' + Math.random().toString(36).substr(2, 9);
-        const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
-        codeBlocks.push(`
-            <div class="code-block">
-                <div class="code-header">
-                    <span class="code-language">${escapeHtml(language)}</span>
-                    <button class="code-copy-btn" onclick="copyCode('${codeId}')">
-                        <i class="fas fa-copy"></i> Salin
-                    </button>
-                </div>
-                <div class="code-content">
-                    <pre><code id="${codeId}">${escapeHtml(code.trim())}</code></pre>
-                </div>
-            </div>
-        `);
-        return placeholder;
-    });
-
-    processedText = processedText.replace(/\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/g, (match, title, url) => {
-        return `<a href="${url.trim()}" target="_blank" rel="noopener noreferrer" class="message-link">${escapeHtml(title.trim())}</a>`;
-    });
-
-    processedText = processedText.replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>');
-    processedText = processedText.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    processedText = processedText.replace(/\*(.+?)\*/g, '<em>$1</em>');
-    processedText = processedText.replace(/\n/g, '<br>');
-
-    codeBlocks.forEach((block, i) => {
-        processedText = processedText.replace(`__CODE_BLOCK_${i}__`, block);
-    });
-
-    return processedText;
-}
-
-window.copyCode = async function(id) {
-    const el = document.getElementById(id);
-    const btn = el.closest('.code-block').querySelector('.code-copy-btn');
-    const text = el.textContent;
-    const orig = btn.innerHTML;
-    try {
-        await navigator.clipboard.writeText(text);
-        btn.innerHTML = '<i class="fas fa-check"></i> Tersalin';
-        btn.classList.add('copied');
-        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
-    } catch { showToast('Error', 'Gagal menyalin', 'error'); }
-};
-
-window.copyMessage = async function(btn) {
-    const text = btn.closest('.message-content').querySelector('.message-bubble').innerText;
-    const orig = btn.innerHTML;
-    try {
-        await navigator.clipboard.writeText(text);
-        btn.innerHTML = '<i class="fas fa-check"></i> Tersalin';
-        setTimeout(() => btn.innerHTML = orig, 2000);
-    } catch { showToast('Error', 'Gagal menyalin', 'error'); }
-};
-
-function showTypingIndicator() {
-    const el = document.createElement('div');
-    el.className = 'typing-indicator';
-    el.id = 'typingIndicator';
-    el.innerHTML = `
-        <div class="message-avatar bot"><img src="${isDarkMode ? DARK_PROFILE : LIGHT_PROFILE}" alt="AI"></div>
-        <div class="typing-dots">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-        </div>
-    `;
-    chatbox.appendChild(el);
-    chatbox.scrollTop = chatbox.scrollHeight;
-}
-
-function hideTypingIndicator() {
-    const el = document.getElementById('typingIndicator');
-    if (el) el.remove();
-}
-
-function hideWelcome() { welcomeScreen.style.display = 'none'; }
-
-clearChatBtn.addEventListener('click', () => {
-    if (confirm('Hapus semua pesan?')) {
-        chatbox.innerHTML = '';
-        welcomeScreen.style.display = 'flex';
-        messageCount = 0; responseTimes = []; chatHistory = [];
-        updateMessageCount(); updateAvgResponse();
-        showToast('Dibersihkan', 'Riwayat dihapus', 'success');
+    function hideTypingIndicator() {
+        const el = document.getElementById('typingIndicator');
+        if (el) el.remove();
     }
-});
 
-exportChatBtn.addEventListener('click', () => {
-    let text = 'Swampy AI Chat Export\n' + '='.repeat(50) + '\n\n';
-    chatbox.querySelectorAll('.message-wrapper').forEach(m => {
-        const sender = m.classList.contains('user') ? 'Kamu' : 'Swampy AI';
-        const msg = m.querySelector('.message-bubble').innerText;
-        const time = m.querySelector('.message-header').innerText;
-        text += `[${time}] ${sender}:\n${msg}\n\n`;
+    function hideWelcome() { welcomeScreen.style.display = 'none'; }
+
+    clearChatBtn.addEventListener('click', () => {
+        if (confirm('Hapus semua pesan?')) {
+            chatbox.innerHTML = '';
+            welcomeScreen.style.display = 'flex';
+            messageCount = 0; responseTimes = []; chatHistory = [];
+            updateMessageCount(); updateAvgResponse();
+            showToast('Dibersihkan', 'Riwayat dihapus', 'success');
+        }
     });
-    const blob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `swampy-chat-${Date.now()}.txt`; a.click();
-    URL.revokeObjectURL(url);
-    showToast('Diexport', 'Chat diunduh', 'success');
-});
 
-function updateStats(time) { responseTimes.push(time); updateAvgResponse(); }
-function updateMessageCount() { document.getElementById('messageCount').textContent = messageCount; }
-function updateAvgResponse() {
-    const avg = responseTimes.length ? (responseTimes.reduce((a,b) => a+b, 0) / responseTimes.length / 1000).toFixed(1) + 's' : '-';
-    document.getElementById('avgResponse').textContent = avg;
-}
+    exportChatBtn.addEventListener('click', () => {
+        let text = 'Swampy AI Chat Export\n' + '='.repeat(50) + '\n\n';
+        chatbox.querySelectorAll('.message-wrapper').forEach(m => {
+            const sender = m.classList.contains('user') ? 'Kamu' : 'Swampy AI';
+            const msg = m.querySelector('.message-bubble').innerText;
+            const time = m.querySelector('.message-header').innerText;
+            text += `[${time}] ${sender}:\n${msg}\n\n`;
+        });
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `swampy-chat-${Date.now()}.txt`; a.click();
+        URL.revokeObjectURL(url);
+        showToast('Diexport', 'Chat diunduh', 'success');
+    });
 
-setInterval(() => {
-    const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
-    const m = Math.floor(elapsed / 60);
-    const s = (elapsed % 60).toString().padStart(2, '0');
-    document.getElementById('sessionTime').textContent = `${m}:${s}`;
-}, 1000);
+    function updateStats(time) { responseTimes.push(time); updateAvgResponse(); }
+    function updateMessageCount() { document.getElementById('messageCount').textContent = messageCount; }
+    function updateAvgResponse() {
+        const avg = responseTimes.length ? (responseTimes.reduce((a,b) => a+b, 0) / responseTimes.length / 1000).toFixed(1) + 's' : '-';
+        document.getElementById('avgResponse').textContent = avg;
+    }
 
-function showToast(title, msg, type = 'success') {
-    const toast = document.getElementById('toast');
-    const icon = toast.querySelector('.toast-icon');
-    toast.querySelector('.toast-title').textContent = title;
-    toast.querySelector('.toast-message').textContent = msg;
-    icon.className = `toast-icon ${type}`;
-    icon.innerHTML = type === 'success' 
-        ? '<i class="fas fa-check"></i>' 
-        : '<i class="fas fa-times"></i>';
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3000);
-}
+    setInterval(() => {
+        const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
+        const m = Math.floor(elapsed / 60);
+        const s = (elapsed % 60).toString().padStart(2, '0');
+        document.getElementById('sessionTime').textContent = `${m}:${s}`;
+    }, 1000);
 
-input.focus();
-    </script>
+    function showToast(title, msg, type = 'success') {
+        const toast = document.getElementById('toast');
+        const icon = toast.querySelector('.toast-icon');
+        toast.querySelector('.toast-title').textContent = title;
+        toast.querySelector('.toast-message').textContent = msg;
+        icon.className = `toast-icon ${type}`;
+        icon.innerHTML = type === 'success' 
+            ? '<i class="fas fa-check"></i>' 
+            : '<i class="fas fa-times"></i>';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    input.focus();
+</script>
 </body>
 </html>
