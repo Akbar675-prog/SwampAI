@@ -1,0 +1,24 @@
+// SwampAI/middleware.js
+import { NextResponse } from 'next/server';
+import { get } from '@vercel/edge-config';
+
+export async function middleware(req) {
+  const path = req.nextUrl.pathname;
+
+  // JANGAN blokir API, file statis, atau maintenance page
+  if (path.startsWith('/api') || path.includes('.') || path === '/maintenance.html') {
+    return NextResponse.next();
+  }
+
+  const isMaintenance = await get('isMaintenance');
+
+  if (isMaintenance) {
+    const url = req.nextUrl.clone();
+    url.pathname = '/maintenance.html';
+    return NextResponse.rewrite(url);
+  }
+
+  return NextResponse.next();
+}
+
+export const config = { matcher: '/:path*' };
