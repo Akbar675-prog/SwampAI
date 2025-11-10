@@ -1,4 +1,3 @@
-<!-- SwampAI/maintenance.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -46,9 +45,7 @@
           src.src = d.video;
           document.getElementById('vid').load();
         }
-        if (d.text) {
-          document.getElementById('msg').textContent = d.text;
-        }
+        if (d.text) document.getElementById('msg').textContent = d.text;
       })
       .catch(() => {
         document.getElementById('msg').textContent = "Sedang dalam pemeliharaan...";
