@@ -1,3 +1,4 @@
+<!--Base file-->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,7 +7,7 @@
     <title>Swampy AI - Chatbot</title>
     <meta property="og:image" content="https://od.lk/s/OTlfNzQzOTkyMjdf/Screenshot_20251109_114139_CapCut.png">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://swamp-ai.vercel.app">
+    <meta property="og:url" content="">
     <meta property="og:description" content="Swampy AI, adalah AI dengan fitur lengkap yang telah diverifikasi oleh Google LLC.">
     <link rel="icon" href="https://od.lk/s/OTlfNzQzOTkyMjdf/Screenshot_20251109_114139_CapCut.png" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -26,9 +27,6 @@
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1);
             --user-message: #0ea5e9; --bot-message: #f5f5f5; --success: #10b981; --error: #ef4444;
             --code-bg: #0d1117; --code-text: #d4d4d4;
-            --glass-bg: rgba(255, 255, 255, 0.15);
-            --glass-border: rgba(255, 255, 255, 0.25);
-            --glass-glow: rgba(14, 165, 233, 0.3);
         }
         [data-theme="dark"] {
             --bg-primary: #000000; --bg-secondary: #0a0a0a; --bg-tertiary: #1a1a1a; --bg-card: #121212;
@@ -37,22 +35,18 @@
             --shadow-md: 0 4px 12px rgba(255, 255, 255, 0.03);
             --shadow-lg: 0 20px 40px rgba(255, 255, 255, 0.05);
             --bot-message: #1a1a1a;
-            --glass-bg: rgba(30, 30, 30, 0.3);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-glow: rgba(14, 165, 233, 0.2);
         }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes typing { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        @keyframes typing { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-        @keyframes ripple { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(4); opacity: 0; } }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
-            transition: all 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -70,91 +64,27 @@
             animation: fadeIn 0.6s ease-out;
         }
 
-        /* === LIQUID GLASS (iOS 26 STYLE) === */
         .chat-container {
-            position: relative;
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            overflow: hidden;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             box-shadow: var(--shadow-md);
-            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
             animation: slideUp 0.6s ease-out 0.1s both;
             max-height: calc(100vh - 280px);
             min-height: 400px;
         }
 
-        .chat-container::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(135deg,
-                rgba(14, 165, 233, 0.12) 0%,
-                rgba(37, 99, 235, 0.06) 50%,
-                rgba(14, 165, 233, 0.12) 100%
-            );
-            border-radius: 24px;
-            z-index: -1;
-            transition: all 0.4s ease;
-            pointer-events: none;
-        }
-
-        .chat-container:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.18);
-            border-color: var(--glass-glow);
-        }
-
-        .chat-container:hover::before {
-            background: linear-gradient(135deg,
-                rgba(14, 165, 233, 0.25) 0%,
-                rgba(37, 99, 235, 0.15) 50%,
-                rgba(14, 165, 233, 0.25) 100%
-            );
-        }
-
-        /* === EFEK KLIK HANYA DI TOMBOL ROBOT === */
-        .model-btn {
-            position: relative;
-            overflow: hidden;
-        }
-
-        .model-btn::after {
-            content: '';
-            position: absolute;
-            width: 0; height: 0;
-            background: rgba(255, 255, 255, 0.4);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: width 0.4s ease, height 0.4s ease;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .model-btn.pressed::after {
-            width: 80px;
-            height: 80px;
-        }
-
-        [data-theme="dark"] .model-btn::after {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        /* === HEADER & CHAT === */
         .chat-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 1rem 1.25rem;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid var(--glass-border);
-            z-index: 2;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
         }
 
         .chat-info {
@@ -174,7 +104,6 @@
             color: white;
             font-size: 1.25rem;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
         }
 
         .bot-avatar img {
@@ -222,22 +151,19 @@
             height: 36px;
             border: none;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
+            background: var(--bg-card);
             color: var(--text-primary);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .action-btn:hover {
             background: var(--accent);
             color: white;
             transform: scale(1.1);
-            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.4);
         }
 
         .dropdown {
@@ -253,10 +179,9 @@
             position: absolute;
             top: 100%;
             left: 0;
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             box-shadow: var(--shadow-md);
             min-width: 180px;
             z-index: 1000;
@@ -284,11 +209,11 @@
 
         .dropdown-item:last-child {
             border-bottom: none;
-            border-radius: 0 0 16px 16px;
+            border-radius: 0 0 12px 12px;
         }
 
         .dropdown-item:first-child {
-            border-radius: 16px 16px 0 0;
+            border-radius: 12px 12px 0 0;
         }
 
         .dropdown-item:hover {
@@ -309,7 +234,7 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            background: transparent;
+            background: var(--bg-primary);
         }
 
         .message-wrapper {
@@ -375,15 +300,12 @@
 
         .message-bubble {
             padding: 0.875rem 1.125rem;
-            border-radius: 16px;
+            border-radius: 12px;
             font-size: 0.9rem;
             line-height: 1.6;
             word-wrap: break-word;
             overflow-wrap: break-word;
             word-break: break-word;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--glass-border);
         }
 
         .message-bubble.user {
@@ -393,18 +315,19 @@
         }
 
         .message-bubble.bot {
-            background: rgba(255, 255, 255, 0.15);
+            background: var(--bot-message);
             color: var(--text-primary);
             border-bottom-left-radius: 4px;
+            border: 1px solid var(--border);
         }
 
         .code-block {
-            background: rgba(13, 17, 23, 0.8);
-            border: 1px solid var(--glass-border);
-            border-radius: 12px;
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             overflow: hidden;
             margin: 0.75rem 0;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         .code-header {
@@ -426,10 +349,10 @@
 
         .code-copy-btn {
             padding: 0.4rem 0.8rem;
-            background: rgba(14, 165, 233, 0.2);
+            background: rgba(14, 165, 233, 0.1);
             color: #58a6ff;
-            border: 1px solid rgba(14, 165, 233, 0.4);
-            border-radius: 8px;
+            border: 1px solid rgba(14, 165, 233, 0.3);
+            border-radius: 6px;
             cursor: pointer;
             font-size: 0.75rem;
             font-weight: 600;
@@ -440,14 +363,14 @@
         }
 
         .code-copy-btn:hover {
-            background: rgba(14, 165, 233, 0.3);
-            border-color: rgba(14, 165, 233, 0.6);
+            background: rgba(14, 165, 233, 0.2);
+            border-color: rgba(14, 165, 233, 0.5);
         }
 
         .code-copy-btn.copied {
-            background: rgba(16, 185, 129, 0.2);
+            background: rgba(16, 185, 129, 0.1);
             color: #10b981;
-            border-color: rgba(16, 185, 129, 0.4);
+            border-color: rgba(16, 185, 129, 0.3);
         }
 
         .code-content {
@@ -470,13 +393,13 @@
         }
 
         .message-bubble code.inline-code {
-            background: rgba(14, 165, 233, 0.15);
+            background: rgba(14, 165, 233, 0.1);
             color: #58a6ff;
             padding: 0.15rem 0.4rem;
-            border-radius: 6px;
+            border-radius: 4px;
             font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
             font-size: 0.875rem;
-            border: 1px solid rgba(14, 165, 233, 0.25);
+            border: 1px solid rgba(14, 165, 233, 0.2);
         }
 
         .message-link {
@@ -510,14 +433,13 @@
         }
 
         .message-action {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--glass-border);
+            background: none;
+            border: none;
             color: var(--text-muted);
             cursor: pointer;
             font-size: 0.75rem;
             padding: 0.25rem 0.5rem;
-            border-radius: 8px;
+            border-radius: 6px;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
@@ -525,37 +447,8 @@
         }
 
         .message-action:hover {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-            transform: scale(1.05);
-        }
-
-        .google-login-btn {
-            background: #4285F4;
-            color: white;
-            border-radius: 8px;
-            padding: 0.4rem 0.8rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(66, 133, 244, 0.3);
-        }
-
-        .google-login-btn .g-icon {
-            background: white;
-            color: #4285F4;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 12px;
+            background: var(--bg-tertiary);
+            color: var(--accent);
         }
 
         .typing-indicator {
@@ -569,10 +462,9 @@
             align-items: center;
             gap: 0.375rem;
             padding: 0.875rem 1.125rem;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            background: var(--bot-message);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             border-bottom-left-radius: 4px;
         }
 
@@ -589,10 +481,8 @@
 
         .chat-input-container {
             padding: 1rem 1.25rem;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            border-top: 1px solid var(--glass-border);
-            z-index: 2;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
         }
 
         .suggested-prompts {
@@ -605,9 +495,8 @@
 
         .prompt-chip {
             padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--glass-border);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
             border-radius: 20px;
             font-size: 0.8rem;
             color: var(--text-secondary);
@@ -621,7 +510,6 @@
             color: white;
             border-color: var(--accent);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
         }
 
         .input-wrapper {
@@ -658,10 +546,9 @@
             min-height: 44px;
             max-height: 120px;
             padding: 0.75rem 1rem;
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--bg-tertiary);
             color: var(--text-primary);
             font-size: 0.9rem;
             font-family: inherit;
@@ -672,7 +559,7 @@
         textarea:focus {
             outline: none;
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
         }
 
         textarea::placeholder {
@@ -696,20 +583,17 @@
             justify-content: center;
             font-size: 1.125rem;
             transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .send-btn {
             background: var(--gradient-primary);
             color: white;
-            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
         }
 
         .send-btn:hover:not(:disabled) {
             transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.5);
+            box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
         }
 
         .send-btn:disabled {
@@ -718,8 +602,10 @@
         }
 
         .newline-btn {
+            background: var(--bg-tertiary);
             color: var(--text-primary);
-            border: 1px solid var(--glass-border);
+            border: 1px solid var(--border);
+            font-size: 0.9rem;
         }
 
         .newline-btn:hover {
@@ -738,10 +624,9 @@
         }
 
         .stat-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             padding: 1rem;
             display: flex;
             align-items: center;
@@ -753,19 +638,18 @@
         .stat-card:hover {
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
-            border-color: var(--glass-glow);
         }
 
         .stat-icon {
             width: 40px;
             height: 40px;
             background: var(--gradient-primary);
-            border-radius: 12px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.125rem;
+            font-size: 1.125;
         }
 
         .stat-info {
@@ -788,10 +672,9 @@
             position: fixed;
             bottom: 2rem;
             right: 2rem;
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             padding: 1rem 1.25rem;
             box-shadow: var(--shadow-lg);
             display: flex;
@@ -841,8 +724,8 @@
         .welcome-icon {
             width: 200px;
             height: 200px;
-            background: rgba(0,0,0,0.1);
-            border-radius: 24px;
+            background: rgba(black);
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -851,15 +734,13 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.2);
             overflow: hidden;
             transition: all 0.3s ease;
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
         }
 
         .welcome-icon video {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 24px;
+            border-radius: 20px;
         }
 
         .welcome-title {
@@ -885,10 +766,9 @@
 
         .example-prompt {
             padding: 1rem;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-align: left;
@@ -899,7 +779,7 @@
             color: white;
             border-color: var(--accent);
             transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.3);
+            box-shadow: var(--shadow-md);
         }
 
         .example-prompt i {
@@ -914,7 +794,7 @@
 
         @media (max-width: 768px) {
             .container { padding: 0.5rem; }
-            .chat-container { max-height: calc(100vh - 220px); min-height: 450px; border-radius: 20px; }
+            .chat-container { max-height: calc(100vh - 220px); min-height: 450px; }
             .chat-header { padding: 1rem; flex-wrap: wrap; gap: 0.75rem; }
             .bot-avatar { width: 38px; height: 38px; }
             .action-btn { width: 34px; height: 34px; font-size: 0.9rem; }
@@ -925,19 +805,19 @@
             .chat-input-container { padding: 1rem; }
             .send-btn, .newline-btn { width: 48px; height: 48px; }
             .stats-bar { grid-template-columns: 1fr; }
-            .toast { bottom: 1rem; right: 1rem; left: 1rem; min-width: auto; border-radius: 16px; }
+            .toast { bottom: 1rem; right: 1rem; left: 1rem; min-width: auto; }
         }
 
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 4px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-        ::selection { background: rgba(14, 165, 233, 0.3); color: var(--text-primary); }
+        ::selection { background: rgba(14, 165, 233, 0.2); color: var(--text-primary); }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="chat-container" id="chatContainer">
+        <div class="chat-container">
             <div class="chat-header">
                 <div class="chat-info">
                     <div class="bot-avatar" id="botAvatar">
@@ -953,11 +833,11 @@
                 </div>
                 <div class="chat-actions">
                     <div class="dropdown" id="modelDropdown">
-                        <button class="action-btn model-btn dropdown-toggle" title="Pilih Model">
+                        <button class="action-btn dropdown-toggle" title="Pilih Model">
                             <i class="fas fa-robot"></i>
                         </button>
                         <div class="dropdown-menu" id="modelMenu">
-                            <div class="dropdown-item active" data-model="lumen">Lumen <small>Kreatif</small></div>
+                            <div class="dropdown-item" data-model="lumen">Lumen <small>Kreatif</small></div>
                             <div class="dropdown-item" data-model="echo">Echo <small>Ringkas</small></div>
                             <div class="dropdown-item" data-model="pulse">Pulse <small>Enerjik</small></div>
                             <div class="dropdown-item" data-model="aether">Aether <small>Formal</small></div>
@@ -1066,312 +946,490 @@
     </div>
 
     <script>
-        // === MODEL SYSTEM ===
-        const MODELS = {
-        'lumen': { name: 'Lumen', desc: 'Kreatif & Penerang', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-        'echo': { name: 'Echo', desc: 'Ringkas & Jelas', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-        'pulse': { name: 'Pulse', desc: 'Interaktif & Enerjik', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-        'aether': { name: 'Aether', desc: 'Profesional & Formal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-        'cipher': { name: 'Cipher', desc: 'Master Kode', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-        'drift': { name: 'Drift', desc: 'Santai & Ramah', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-        'flux': { name: 'Flux', desc: 'Adaptif & Fleksibel', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-        'zenith': { name: 'Zenith', desc: 'Pro Maksimal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-        'spectra': { name: 'Spectra', desc: 'Serba Guna', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' }
+      // === MODEL SYSTEM ===
+const MODELS = {
+    'lumen': { name: 'Lumen', desc: 'Kreatif & Penerang', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'echo': { name: 'Echo', desc: 'Ringkas & Jelas', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'pulse': { name: 'Pulse', desc: 'Interaktif & Enerjik', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'aether': { name: 'Aether', desc: 'Profesional & Formal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'cipher': { name: 'Cipher', desc: 'Master Kode', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'drift': { name: 'Drift', desc: 'Santai & Ramah', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'flux': { name: 'Flux', desc: 'Adaptif & Fleksibel', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'zenith': { name: 'Zenith', desc: 'Pro Maksimal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'spectra': { name: 'Spectra', desc: 'Serba Guna', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' }
+};
+
+let currentModel = 'lumen';
+
+// === API ENDPOINTS (Backend Proxy) ===
+const GEMINI_ENDPOINT = '/api/gemini';
+const TELEGRAM_ENDPOINT = '/api/telegram';
+
+const LIGHT_PROFILE = 'https://files.catbox.moe/y8tb6l.png';
+const DARK_PROFILE  = 'https://files.catbox.moe/3p6brz.png';
+const LIGHT_VIDEO   = 'src/video/thumbLight.mp4';
+const DARK_VIDEO    = 'src/video/thumbDark.mp4';
+
+// === TELEGRAM MONITORING (via backend) ===
+async function sendToTelegram(sender, time, message) {
+    const cleanMsg = message
+        .replace(/<[^>]*>/g, '')
+        .replace(/\*\*/g, '*')
+        .replace(/```[\s\S]*?```/g, '(kode)')
+        .replace(/`([^`]+)`/g, '`$1`');
+    const text = `${sender} • ${time}\n${cleanMsg}`;
+    try {
+        await fetch(TELEGRAM_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, parse_mode: 'Markdown' })
+        });
+    } catch (err) {
+        console.warn('Telegram gagal:', err);
+    }
+}
+
+// === ELEMENTS ===
+const botAvatarHeader = document.getElementById('botAvatar');
+const welcomeIcon     = document.getElementById('welcomeIcon');
+const modelDropdown   = document.getElementById('modelDropdown');
+const modelMenu       = document.getElementById('modelMenu');
+const dropdownToggle  = modelDropdown.querySelector('.dropdown-toggle');
+const chatbox = document.getElementById('chatbox');
+const form = document.getElementById('chatForm');
+const input = document.getElementById('userMessage');
+const sendBtn = document.getElementById('sendBtn');
+const newlineBtn = document.getElementById('newlineBtn');
+const charCount = document.getElementById('charCount');
+const welcomeScreen = document.getElementById('welcomeScreen');
+const clearChatBtn = document.getElementById('clearChat');
+const exportChatBtn = document.getElementById('exportChat');
+const themeToggle = document.getElementById('themeToggle');
+
+let messageCount = 0;
+let responseTimes = [];
+let sessionStart = Date.now();
+let chatHistory = [];
+let controller = null;
+let isDarkMode = false;
+
+// === TEMA ===
+const body = document.body;
+const savedTheme = localStorage.getItem('theme');
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+function updateBotAvatar() {
+    const profile = isDarkMode ? DARK_PROFILE : LIGHT_PROFILE;
+    botAvatarHeader.innerHTML = `<img src="${profile}" alt="AI">`;
+}
+
+function updateWelcomeIcon() {
+    const videoSrc = isDarkMode ? DARK_VIDEO : LIGHT_VIDEO;
+    welcomeIcon.innerHTML = `
+        <video autoplay loop muted playsinline style="width:100%;height:100%;border-radius:20px;object-fit:cover;">
+            <source src="${videoSrc}" type="video/mp4">
+        </video>
+    `;
+}
+
+function applyTheme(dark) {
+    isDarkMode = dark;
+    if (dark) {
+        body.setAttribute('data-theme', 'dark');
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+    } else {
+        body.removeAttribute('data-theme');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+    updateBotAvatar();
+    updateWelcomeIcon();
+}
+
+const initialDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+applyTheme(initialDark);
+
+themeToggle.addEventListener('click', () => {
+    const dark = !body.hasAttribute('data-theme');
+    applyTheme(dark);
+    localStorage.setItem('theme', dark ? 'dark' : 'light');
+});
+
+// === MODEL DROPDOWN ===
+dropdownToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    modelMenu.classList.toggle('show');
+});
+
+document.addEventListener('click', () => modelMenu.classList.remove('show'));
+
+modelMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const item = e.target.closest('.dropdown-item');
+    if (!item) return;
+    currentModel = item.dataset.model;
+    updateModelDisplay();
+    modelMenu.classList.remove('show');
+    showToast('Model Diubah', `Sekarang: ${MODELS[currentModel].desc}`, 'success');
+});
+
+function updateModelDisplay() {
+    document.querySelectorAll('.dropdown-item').forEach(el => {
+        el.classList.toggle('active', el.dataset.model === currentModel);
+    });
+    dropdownToggle.title = `Model: ${MODELS[currentModel].desc}`;
+}
+updateModelDisplay();
+
+// === INPUT ===
+input.addEventListener('input', () => {
+    input.style.height = 'auto';
+    input.style.height = input.scrollHeight + 'px';
+    charCount.textContent = input.value.length;
+    sendBtn.disabled = !input.value.trim();
+});
+
+input.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        form.dispatchEvent(new Event('submit'));
+    }
+});
+
+newlineBtn.addEventListener('click', () => {
+    const pos = input.selectionStart;
+    input.value = input.value.substring(0, pos) + '\n' + input.value.substring(pos);
+    input.selectionStart = input.selectionEnd = pos + 1;
+    input.dispatchEvent(new Event('input'));
+});
+
+// === KIRIM PROMPT LANGSUNG ===
+function sendPrompt(prompt) {
+    if (!prompt.trim()) return;
+    input.value = prompt;
+    input.dispatchEvent(new Event('input'));
+    form.dispatchEvent(new Event('submit'));
+}
+
+document.querySelectorAll('.example-prompt, .prompt-chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const prompt = btn.dataset.prompt;
+        if (prompt) {
+            hideWelcome();
+            sendPrompt(prompt);
+        }
+    });
+});
+
+// === SUBMIT ===
+form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const userMessage = input.value.trim();
+    if (!userMessage) return;
+
+    controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+    hideWelcome();
+    const userTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    addMessage(userMessage, 'user');
+    sendToTelegram('Pengguna', userTime, userMessage);
+
+    input.value = ''; input.style.height = 'auto'; charCount.textContent = '0'; sendBtn.disabled = true;
+    showTypingIndicator();
+    const startTime = Date.now();
+
+    try {
+        const botReply = await getResponse(userMessage);
+        clearTimeout(timeoutId);
+        const responseTime = Date.now() - startTime;
+        const botTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        hideTypingIndicator();
+        addMessage(botReply, 'bot');
+        sendToTelegram('Swampy AI', botTime, botReply);
+        updateStats(responseTime);
+        showToast('Sukses', 'Jawaban diterima', 'success');
+    } catch (err) {
+        clearTimeout(timeoutId);
+        hideTypingIndicator();
+        addMessage('Maaf, respons terlambat. Tapi saya tetap jawab: **Coba tanya lagi!**', 'bot');
+        showToast('Timeout', 'Gagal dalam 15 detik', 'error');
+    }
+    sendBtn.disabled = false;
+    input.focus();
+});
+
+// === RESPONSE LOGIC (via backend proxy) ===
+async function getResponse(userMessage) {
+    const lowerMsg = userMessage.toLowerCase().trim();
+
+    const siapaKamuKeywords = [
+        'siapa kamu', 'kamu siapa', 'who are you', 'siapa kamu?', 
+        'kamu siapa?', 'siapa kamu nih', 'kamu siapa nih'
+    ];
+    if (siapaKamuKeywords.some(kw => lowerMsg.includes(kw))) {
+        return `Saya adalah **Swampy AI**, asisten cerdas yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Saya siap bantu kamu coding, belajar, atau ngobrol!`;
+    }
+
+    if (lowerMsg.includes('apa mode') || lowerMsg.includes('model apa') || lowerMsg === 'mode') {
+        return `Saya sedang menggunakan model **${MODELS[currentModel].name}** — *${MODELS[currentModel].desc}*`;
+    }
+
+    const systemPrompt = MODELS[currentModel].prompt;
+    const fullPrompt = `${systemPrompt}\n\nUser: ${userMessage}\nAssistant:`;
+
+    chatHistory.push({ role: 'user', parts: [{ text: fullPrompt }] });
+
+    const payload = {
+        contents: chatHistory.slice(-5),
+        generationConfig: { 
+            temperature: 0.7, 
+            maxOutputTokens: 1024, 
+            topP: 0.8 
+        }
     };
 
-        let currentModel = 'lumen';
-        const GEMINI_ENDPOINT = '/api/gemini';
-        const TELEGRAM_ENDPOINT = '/api/telegram';
-
-        const LIGHT_PROFILE = 'https://files.catbox.moe/y8tb6l.png';
-        const DARK_PROFILE  = 'https://files.catbox.moe/3p6brz.png';
-        const LIGHT_VIDEO   = 'src/video/thumbLight.mp4';
-        const DARK_VIDEO    = 'src/video/thumbDark.mp4';
-
-        // === GOOGLE OAUTH ===
-        const GOOGLE_CLIENT_ID = '980283068707-knla4fthlh35ddc01f6s66c75tf8rmt2.apps.googleusercontent.com';
-        const REDIRECT_URI = 'https://swamp-ai.vercel.app';
-        const GOOGLE_OAUTH_URL = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token id_token&scope=${encodeURIComponent('email profile openid')}&prompt=select_account&nonce=${Date.now()}`;
-
-        // === USER STATE ===
-        let userLoggedIn = false;
-        let userName = 'Kamu';
-        let userIP = 'Loading...';
-
-        async function getUserIP() {
-            try {
-                const res = await fetch('https://api.ipify.org?format=json');
-                const data = await res.json();
-                userIP = data.ip;
-            } catch {
-                userIP = 'Tidak diketahui';
-            }
-        }
-        getUserIP();
-
-        // === TELEGRAM ===
-        async function sendToTelegram(sender, time, message) {
-            const cleanMsg = message.replace(/<[^>]*>/g, '').replace(/\*\*/g, '*').replace(/```[\s\S]*?```/g, '(kode)').replace(/`([^`]+)`/g, '`$1`');
-            const text = `${sender} • ${time}\n${cleanMsg}`;
-            try {
-                await fetch(TELEGRAM_ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, parse_mode: 'Markdown' }) });
-            } catch (err) { console.warn('Telegram gagal:', err); }
-        }
-
-        // === LOGIN HANDLER ===
-        async function handleGoogleLogin() {
-            const hash = window.location.hash;
-            if (!hash) return;
-
-            const params = new URLSearchParams(hash.substring(1));
-            const idToken = params.get('id_token');
-            if (!idToken) return;
-
-            try {
-                const payload = JSON.parse(atob(idToken.split('.')[1]));
-                userName = payload.given_name || payload.name?.split(' ')[0] || 'User';
-                userLoggedIn = true;
-
-                localStorage.setItem('googleUser', JSON.stringify({ name: userName }));
-                hideWelcome();
-                addMessage(`Halo lagi, **${userName}**! Selamat datang kembali.`, 'bot');
-                showToast('Welcome Back!', `Halo ${userName}!`, 'success');
-
-                const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                await sendToTelegram('LOGIN GOOGLE', time, `User: ${userName} (IP: ${userIP})`);
-
-                window.history.replaceState({}, document.title, window.location.pathname);
-            } catch (err) {
-                console.error('Login error:', err);
-            }
-        }
-
-        const savedUser = localStorage.getItem('googleUser');
-        if (savedUser) {
-            const user = JSON.parse(savedUser);
-            userName = user.name;
-            userLoggedIn = true;
-        }
-        handleGoogleLogin();
-
-        // === ELEMENTS ===
-        const botAvatarHeader = document.getElementById('botAvatar');
-        const welcomeIcon = document.getElementById('welcomeIcon');
-        const modelDropdown = document.getElementById('modelDropdown');
-        const modelMenu = document.getElementById('modelMenu');
-        const dropdownToggle = modelDropdown.querySelector('.dropdown-toggle');
-        const chatbox = document.getElementById('chatbox');
-        const form = document.getElementById('chatForm');
-        const input = document.getElementById('userMessage');
-        const sendBtn = document.getElementById('sendBtn');
-        const newlineBtn = document.getElementById('newlineBtn');
-        const charCount = document.getElementById('charCount');
-        const welcomeScreen = document.getElementById('welcomeScreen');
-        const clearChatBtn = document.getElementById('clearChat');
-        const exportChatBtn = document.getElementById('exportChat');
-        const themeToggle = document.getElementById('themeToggle');
-        const chatContainer = document.getElementById('chatContainer');
-
-        let messageCount = 0;
-        let responseTimes = [];
-        let sessionStart = Date.now();
-        let chatHistory = [];
-        let controller = null;
-        let isDarkMode = false;
-
-        // === TEMA ===
-        const body = document.body;
-        const savedTheme = localStorage.getItem('theme');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-        function updateBotAvatar() {
-            const profile = isDarkMode ? DARK_PROFILE : LIGHT_PROFILE;
-            botAvatarHeader.innerHTML = `<img src="${profile}" alt="AI">`;
-            document.querySelectorAll('.message-avatar.bot img').forEach(img => img.src = profile);
-        }
-
-        function updateWelcomeIcon() {
-            const videoSrc = isDarkMode ? DARK_VIDEO : LIGHT_VIDEO;
-            welcomeIcon.innerHTML = `<video autoplay loop muted playsinline><source src="${videoSrc}" type="video/mp4"></video>`;
-        }
-
-        function applyTheme(dark) {
-            isDarkMode = dark;
-            if (dark) {
-                body.setAttribute('data-theme', 'dark');
-                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-            } else {
-                body.removeAttribute('data-theme');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            }
-            updateBotAvatar();
-            updateWelcomeIcon();
-            localStorage.setItem('theme', dark ? 'dark' : 'light');
-        }
-
-        const initialDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
-        applyTheme(initialDark);
-
-        themeToggle.addEventListener('click', () => applyTheme(!isDarkMode));
-
-        // === EFEK KLIK HANYA DI TOMBOL ROBOT ===
-        dropdownToggle.addEventListener('click', function(e) {
-            e.stopPropagation();
-            this.classList.add('pressed');
-            setTimeout(() => this.classList.remove('pressed'), 400);
+    try {
+        const res = await fetch(GEMINI_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: controller?.signal
         });
 
-        // === DROPDOWN ===
-        dropdownToggle.addEventListener('click', () => modelMenu.classList.toggle('show'));
-        document.addEventListener('click', () => modelMenu.classList.remove('show'));
-
-        modelMenu.querySelectorAll('.dropdown-item').forEach(item => {
-            item.addEventListener('click', () => {
-                modelMenu.querySelectorAll('.dropdown-item').forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                currentModel = item.dataset.model;
-                modelMenu.classList.remove('show');
-            });
-        });
-
-        // === INPUT, SUBMIT, DLL ===
-        input.addEventListener('input', () => {
-            input.style.height = 'auto';
-            input.style.height = input.scrollHeight + 'px';
-            charCount.textContent = input.value.length;
-            sendBtn.disabled = !input.value.trim();
-        });
-
-        input.addEventListener('keydown', e => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                form.dispatchEvent(new Event('submit'));
-            }
-        });
-
-        newlineBtn.addEventListener('click', () => {
-            const pos = input.selectionStart;
-            input.value = input.value.substring(0, pos) + '\n' + input.value.substring(pos);
-            input.selectionStart = input.selectionEnd = pos + 1;
-            input.dispatchEvent(new Event('input'));
-        });
-
-        // === KIRIM PROMPT LANGSUNG ===
-        function sendPrompt(prompt) {
-            if (!prompt.trim()) return;
-            input.value = prompt;
-            input.dispatchEvent(new Event('input'));
-            form.dispatchEvent(new Event('submit'));
+        if (!res.ok) {
+            const err = await res.text();
+            console.warn('Gemini error:', err);
+            return `Maaf, saya mengalami gangguan jaringan. Tapi saya tetap bisa bantu! Coba tanya lagi.`;
         }
 
-        document.querySelectorAll('.example-prompt, .prompt-chip').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const prompt = btn.dataset.prompt;
-                if (prompt) {
-                    hideWelcome();
-                    sendPrompt(prompt);
-                }
-            });
-        });
+        const data = await res.json();
+        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
-        // === SUBMIT ===
-        form.addEventListener('submit', async e => {
-            e.preventDefault();
-            const userMessage = input.value.trim();
-            if (!userMessage) return;
-
-            if (isGoogleLoginRequest(userMessage)) {
-                hideWelcome();
-                const userTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                addMessage(userMessage, 'user');
-                sendToTelegram('Pengguna', userTime, userMessage);
-
-                input.value = ''; input.style.height = 'auto'; charCount.textContent = '0'; sendBtn.disabled = true;
-
-                addMessage('Mengarahkan ke login Google...', 'bot');
-                showToast('Login Google', 'Membuka Google OAuth...', 'success');
-
-                setTimeout(() => {
-                    window.location.href = GOOGLE_OAUTH_URL;
-                }, 1200);
-
-                return;
-            }
-
-            controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-            hideWelcome();
-            const userTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-            addMessage(userMessage, 'user');
-            sendToTelegram('Pengguna', userTime, userMessage);
-
-            input.value = ''; input.style.height = 'auto'; charCount.textContent = '0'; sendBtn.disabled = true;
-            showTypingIndicator();
-            const startTime = Date.now();
-
-            try {
-                const botReply = await getResponse(userMessage);
-                clearTimeout(timeoutId);
-                const responseTime = Date.now() - startTime;
-                const botTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                hideTypingIndicator();
-                addMessage(botReply, 'bot');
-                sendToTelegram('Swampy AI', botTime, botReply);
-                updateStats(responseTime);
-                showToast('Sukses', 'Jawaban diterima', 'success');
-            } catch (err) {
-                clearTimeout(timeoutId);
-                hideTypingIndicator();
-                addMessage('Maaf, respons terlambat. Tapi saya tetap jawab: **Coba tanya lagi!**', 'bot');
-                showToast('Timeout', 'Gagal dalam 15 detik', 'error');
-            }
-            sendBtn.disabled = false;
-            input.focus();
-        });
-
-        // === RESPONSE LOGIC (PINTAR) ===
-        async function getResponse(userMessage) {
-            const lower = userMessage.toLowerCase().trim();
-
-            // === CEK KODE ===
-            const codeBlockMatch = userMessage.match(/```[\s\S]*?```/);
-            const hasCode = codeBlockMatch || /function|const|let|=>|return|if|for|while/.test(userMessage);
-            const explainKeywords = ['jelaskan kode', 'apa ini', 'maksudnya', 'explain this code', 'what does this do'];
-            const isExplainRequest = explainKeywords.some(kw => lower.includes(kw));
-
-            if (isExplainRequest && hasCode) {
-                const code = codeBlockMatch ? codeBlockMatch[0].replace(/```/g, '').trim() : extractCodeSnippet(userMessage);
-                return await explainCode(code);
-            }
-
-            // === IDENTITAS ===
-            const identityKeywords = ['siapa nama saya', 'nama saya', 'siapa saya', 'namaku', 'aku siapa', 'who am i', 'my name'];
-            if (identityKeywords.some(kw => lower.includes(kw))) {
-                if (userLoggedIn) {
-                    return `Nama kamu adalah **${userName}**!`;
-                } else {
-                    const warning = `Maaf, kami tidak bisa mengenali mu karena kami tidak melihat aktivitas login pada IP mu, IP: *${userIP}*, kamu bisa login Google agar kami bisa mengenali mu dengan cara mengklik tombol dengan logo huruf "G" di bawah ini.`;
-                    setTimeout(() => addMessage(warning, 'bot', true), 100);
-                    return '';
-                }
-            }
-
-            // === SALAM & TERIMA KASIH ===
-            if (lower.includes('halo') || lower.includes('hai') || lower.includes('selamat')) {
-                return `Halo **${userName}**! Ada yang bisa Swampy bantu hari ini?`;
-            }
-            if (lower.includes('terima kasih') || lower.includes('thanks')) {
-                return `Sama-sama! Senang bisa membantu. Ada lagi?`;
-            }
-
-            // === JAWABAN PINTAR ===
-            return generateSmartResponse(userMessage);
+        if (!reply || reply === '') {
+            return `Saya tidak bisa memberikan jawaban lengkap saat ini, tapi saya tetap di sini! Coba ubah pertanyaannya sedikit.`;
         }
 
-        function extractCodeSnippet(text) {
-            const lines = text.split('\n');
-            return lines.filter(line => /function|const|let|=>|return|if|for|while|\{|\}/.test(line)).join('\n').trim();
+        chatHistory.push({ role: 'model', parts: [{ text: reply }] });
+        if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
+        return reply;
+
+    } catch (err) {
+        if (err.name === 'AbortError') {
+            return `Waktu habis. Saya coba jawab singkat: **Pertanyaanmu menarik!** Tapi jaringan lambat. Coba lagi ya!`;
+        }
+        return `Saya mengalami error teknis. Tapi tenang, saya masih bisa bantu! Coba tanya sesuatu yang lain.`;
+    }
+}
+
+// === ADD MESSAGE DENGAN LIKE & DISLIKE ===
+function addMessage(text, sender) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `message-wrapper ${sender}`;
+    const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+    const profile = sender === 'user' 
+        ? `<div class="message-avatar user"><i class="fas fa-user"></i></div>` 
+        : `<div class="message-avatar bot"><img src="${isDarkMode ? DARK_PROFILE : LIGHT_PROFILE}" alt="AI"></div>`;
+
+    const feedbackButtons = sender === 'bot' ? `
+        <div class="message-actions">
+            <button class="message-action feedback-btn like-btn" onclick="sendFeedback(this, 'like')">
+                <i class="fas fa-thumbs-up"></i> Suka
+            </button>
+            <button class="message-action feedback-btn dislike-btn" onclick="sendFeedback(this, 'dislike')">
+                <i class="fas fa-thumbs-down"></i> Tidak Suka
+            </button>
+            <button class="message-action copy-btn" onclick="copyMessage(this)">
+                <i class="fas fa-copy"></i> Salin
+            </button>
+        </div>
+    ` : '';
+
+    wrapper.innerHTML = `
+        ${profile}
+        <div class="message-content">
+            <div class="message-header">
+                <span>${sender === 'user' ? 'Kamu' : 'Swampy AI'}</span>
+                <span>•</span>
+                <span>${time}</span>
+            </div>
+            <div class="message-bubble ${sender}">${formatMessage(text)}</div>
+            ${feedbackButtons}
+        </div>
+    `;
+    chatbox.appendChild(wrapper);
+    chatbox.scrollTop = chatbox.scrollHeight;
+    messageCount++;
+    updateMessageCount();
+}
+
+// === FEEDBACK FUNCTION ===
+window.sendFeedback = function(btn, type) {
+    const likeBtn = btn.closest('.message-actions').querySelector('.like-btn');
+    const dislikeBtn = btn.closest('.message-actions').querySelector('.dislike-btn');
+
+    likeBtn.classList.remove('liked');
+    dislikeBtn.classList.remove('disliked');
+
+    if (type === 'like') {
+        likeBtn.classList.add('liked');
+        showToast('Terima Kasih!', 'Kamu suka jawaban ini', 'success');
+        sendToTelegram('Feedback', new Date().toLocaleTimeString(), 'User menyukai jawaban');
+    } else {
+        dislikeBtn.classList.add('disliked');
+        showToast('Maaf', 'Kami akan perbaiki jawaban berikutnya', 'error');
+        sendToTelegram('Feedback', new Date().toLocaleTimeString(), 'User tidak suka jawaban');
+    }
+
+    likeBtn.disabled = true;
+    dislikeBtn.disabled = true;
+};
+
+// === FORMAT, COPY, TYPING, STATS, TOAST ===
+function formatMessage(text) {
+    const escapeHtml = str => { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; };
+    const codeBlocks = [];
+    let processedText = text;
+
+    processedText = processedText.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+        const language = lang || 'text';
+        const codeId = 'code-' + Math.random().toString(36).substr(2, 9);
+        const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+        codeBlocks.push(`
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="code-language">${escapeHtml(language)}</span>
+                    <button class="code-copy-btn" onclick="copyCode('${codeId}')">
+                        <i class="fas fa-copy"></i> Salin
+                    </button>
+                </div>
+                <div class="code-content">
+                    <pre><code id="${codeId}">${escapeHtml(code.trim())}</code></pre>
+                </div>
+            </div>
+        `);
+        return placeholder;
+    });
+
+    processedText = processedText.replace(/\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/g, (match, title, url) => {
+        return `<a href="${url.trim()}" target="_blank" rel="noopener noreferrer" class="message-link">${escapeHtml(title.trim())}</a>`;
+    });
+
+    processedText = processedText.replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>');
+    processedText = processedText.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    processedText = processedText.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    processedText = processedText.replace(/\n/g, '<br>');
+
+    codeBlocks.forEach((block, i) => {
+        processedText = processedText.replace(`__CODE_BLOCK_${i}__`, block);
+    });
+
+    return processedText;
+}
+
+window.copyCode = async function(id) {
+    const el = document.getElementById(id);
+    const btn = el.closest('.code-block').querySelector('.code-copy-btn');
+    const text = el.textContent;
+    const orig = btn.innerHTML;
+    try {
+        await navigator.clipboard.writeText(text);
+        btn.innerHTML = '<i class="fas fa-check"></i> Tersalin';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+    } catch { showToast('Error', 'Gagal menyalin', 'error'); }
+};
+
+window.copyMessage = async function(btn) {
+    const text = btn.closest('.message-content').querySelector('.message-bubble').innerText;
+    const orig = btn.innerHTML;
+    try {
+        await navigator.clipboard.writeText(text);
+        btn.innerHTML = '<i class="fas fa-check"></i> Tersalin';
+        setTimeout(() => btn.innerHTML = orig, 2000);
+    } catch { showToast('Error', 'Gagal menyalin', 'error'); }
+};
+
+function showTypingIndicator() {
+    const el = document.createElement('div');
+    el.className = 'typing-indicator';
+    el.id = 'typingIndicator';
+    el.innerHTML = `
+        <div class="message-avatar bot"><img src="${isDarkMode ? DARK_PROFILE : LIGHT_PROFILE}" alt="AI"></div>
+        <div class="typing-dots">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        </div>
+    `;
+    chatbox.appendChild(el);
+    chatbox.scrollTop = chatbox.scrollHeight;
+}
+
+function hideTypingIndicator() {
+    const el = document.getElementById('typingIndicator');
+    if (el) el.remove();
+}
+
+function hideWelcome() { welcomeScreen.style.display = 'none'; }
+
+clearChatBtn.addEventListener('click', () => {
+    if (confirm('Hapus semua pesan?')) {
+        chatbox.innerHTML = '';
+        welcomeScreen.style.display = 'flex';
+        messageCount = 0; responseTimes = []; chatHistory = [];
+        updateMessageCount(); updateAvgResponse();
+        showToast('Dibersihkan', 'Riwayat dihapus', 'success');
+    }
+});
+
+exportChatBtn.addEventListener('click', () => {
+    let text = 'Swampy AI Chat Export\n' + '='.repeat(50) + '\n\n';
+    chatbox.querySelectorAll('.message-wrapper').forEach(m => {
+        const sender = m.classList.contains('user') ? 'Kamu' : 'Swampy AI';
+        const msg = m.querySelector('.message-bubble').innerText;
+        const time = m.querySelector('.message-header').innerText;
+        text += `[${time}] ${sender}:\n${msg}\n\n`;
+    });
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `swampy-chat-${Date.now()}.txt`; a.click();
+    URL.revokeObjectURL(url);
+    showToast('Diexport', 'Chat diunduh', 'success');
+});
+
+function updateStats(time) { responseTimes.push(time); updateAvgResponse(); }
+function updateMessageCount() { document.getElementById('messageCount').textContent = messageCount; }
+function updateAvgResponse() {
+    const avg = responseTimes.length ? (responseTimes.reduce((a,b) => a+b, 0) / responseTimes.length / 1000).toFixed(1) + 's' : '-';
+    document.getElementById('avgResponse').textContent = avg;
+}
+
+setInterval(() => {
+    const elapsed = Math.floor((Date.now() - sessionStart) / 1000);
+    const m = Math.floor(elapsed / 60);
+    const s = (elapsed % 60).toString().padStart(2, '0');
+    document.getElementById('sessionTime').textContent = `${m}:${s}`;
+}, 1000);
+
+function showToast(title, msg, type = 'success') {
+    const toast = document.getElementById('toast');
+    const icon = toast.querySelector('.toast-icon');
+    toast.querySelector('.toast-title').textContent = title;
+    toast.querySelector('.toast-message').textContent = msg;
+    icon.className = `toast-icon ${type}`;
+    icon.innerHTML = type === 'success' 
+        ? '<i class="fas fa-check"></i>' 
+        : '<i class="fas fa-times"></i>';
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+input.focus();
+    </script>
+</body>
+</html>
         }
 
         async function explainCode(code) {
