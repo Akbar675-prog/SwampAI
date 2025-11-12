@@ -1,4 +1,3 @@
-<!--Base file-->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -13,8 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     
-    <!-- Google OAuth Client -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -948,36 +945,38 @@
     <script>
       // === MODEL SYSTEM ===
 const MODELS = {
-    'lumen': { name: 'Lumen', desc: 'Kreatif & Penerang', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'echo': { name: 'Echo', desc: 'Ringkas & Jelas', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'pulse': { name: 'Pulse', desc: 'Interaktif & Enerjik', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'aether': { name: 'Aether', desc: 'Profesional & Formal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'cipher': { name: 'Cipher', desc: 'Master Kode', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'drift': { name: 'Drift', desc: 'Santai & Ramah', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'flux': { name: 'Flux', desc: 'Adaptif & Fleksibel', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'zenith': { name: 'Zenith', desc: 'Pro Maksimal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'spectra': { name: 'Spectra', desc: 'Serba Guna', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' }
+    'lumen': { name: 'Lumen', desc: 'Kreatif & Penerang', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'echo': { name: 'Echo', desc: 'Ringkas & Jelas', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'pulse': { name: 'Pulse', desc: 'Interaktif & Enerjik', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'aether': { name: 'Aether', desc: 'Profesional & Formal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'cipher': { name: 'Cipher', desc: 'Master Kode', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'drift': { name: 'Drift', desc: 'Santai & Ramah', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'flux': { name: 'Flux', desc: 'Adaptif & Fleksibel', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'zenith': { name: 'Zenith', desc: 'Pro Maksimal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'spectra': { name: 'Spectra', desc: 'Serba Guna', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' }
 };
 
 let currentModel = 'lumen';
 
-// === API ENDPOINTS (Backend Proxy) ===
-const GEMINI_ENDPOINT = '/api/gemini';
-const TELEGRAM_ENDPOINT = '/api/telegram';
+// === API ENDPOINTS ===
+const OPENAI_ENDPOINT = '/api/openai.php';
+const TELEGRAM_ENDPOINT = '/api/telegram.php';
 
 const LIGHT_PROFILE = 'https://files.catbox.moe/y8tb6l.png';
 const DARK_PROFILE  = 'https://files.catbox.moe/3p6brz.png';
 const LIGHT_VIDEO   = 'src/video/thumbLight.mp4';
 const DARK_VIDEO    = 'src/video/thumbDark.mp4';
 
-// === TELEGRAM MONITORING (via backend) ===
+// === TELEGRAM MONITORING ===
 async function sendToTelegram(sender, time, message) {
     const cleanMsg = message
         .replace(/<[^>]*>/g, '')
-        .replace(/\*\*/g, '*')
+        .replace(/\*\*/g, '')
         .replace(/```[\s\S]*?```/g, '(kode)')
-        .replace(/`([^`]+)`/g, '`$1`');
+        .replace(/`[^`]*`/g, '$1');
+    
     const text = `${sender} • ${time}\n${cleanMsg}`;
+    
     try {
         await fetch(TELEGRAM_ENDPOINT, {
             method: 'POST',
@@ -1012,6 +1011,7 @@ let sessionStart = Date.now();
 let chatHistory = [];
 let controller = null;
 let isDarkMode = false;
+let currentStreamingMessage = null;
 
 // === TEMA ===
 const body = document.body;
@@ -1120,146 +1120,389 @@ document.querySelectorAll('.example-prompt, .prompt-chip').forEach(btn => {
     });
 });
 
-// === SUBMIT ===
+// === SUBMIT DENGAN STREAMING ===
 form.addEventListener('submit', async e => {
     e.preventDefault();
     const userMessage = input.value.trim();
     if (!userMessage) return;
 
-    controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    controller = new AbortController();  
+    const timeoutId = setTimeout(() => {
+        controller.abort();
+        if (currentStreamingMessage) {
+            currentStreamingMessage.stopStreaming();
+        }
+    }, 30000);  
 
-    hideWelcome();
-    const userTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-    addMessage(userMessage, 'user');
-    sendToTelegram('Pengguna', userTime, userMessage);
+    hideWelcome();  
+    const userTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });  
+    addMessage(userMessage, 'user');  
+    sendToTelegram('Pengguna', userTime, userMessage);  
 
-    input.value = ''; input.style.height = 'auto'; charCount.textContent = '0'; sendBtn.disabled = true;
-    showTypingIndicator();
-    const startTime = Date.now();
+    input.value = ''; input.style.height = 'auto'; charCount.textContent = '0'; sendBtn.disabled = true;  
+    
+    const startTime = Date.now();  
+    let fullResponse = '';
 
-    try {
-        const botReply = await getResponse(userMessage);
-        clearTimeout(timeoutId);
-        const responseTime = Date.now() - startTime;
-        const botTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-        hideTypingIndicator();
-        addMessage(botReply, 'bot');
-        sendToTelegram('Swampy AI', botTime, botReply);
-        updateStats(responseTime);
-        showToast('Sukses', 'Jawaban diterima', 'success');
-    } catch (err) {
-        clearTimeout(timeoutId);
-        hideTypingIndicator();
-        addMessage('Maaf, respons terlambat. Tapi saya tetap jawab: **Coba tanya lagi!**', 'bot');
-        showToast('Timeout', 'Gagal dalam 15 detik', 'error');
-    }
-    sendBtn.disabled = false;
+    try {  
+        // Buat message element untuk streaming
+        currentStreamingMessage = createStreamingMessage();
+        
+        // Dapatkan response streaming
+        await getStreamingResponse(userMessage, (chunk) => {
+            fullResponse += chunk;
+            currentStreamingMessage.updateContent(fullResponse);
+        });
+
+        clearTimeout(timeoutId);  
+        const responseTime = Date.now() - startTime;  
+        const botTime = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });  
+        
+        // Finalize streaming message
+        currentStreamingMessage.finalize();
+        currentStreamingMessage = null;
+        
+        sendToTelegram('Swampy AI', botTime, fullResponse);  
+        updateStats(responseTime);  
+        showToast('Sukses', 'Jawaban selesai', 'success');  
+
+        // Simpan ke chat history
+        chatHistory.push(
+            { role: 'user', content: userMessage },
+            { role: 'assistant', content: fullResponse }
+        );
+        
+        // Batasi history
+        if (chatHistory.length > 10) {
+            chatHistory = chatHistory.slice(-10);
+        }
+
+    } catch (err) {  
+        clearTimeout(timeoutId);  
+        
+        if (currentStreamingMessage) {
+            currentStreamingMessage.stopStreaming();
+            currentStreamingMessage = null;
+        }
+        
+        addMessage('Maaf, terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi.', 'bot');  
+        showToast('Error', 'Gagal memproses permintaan', 'error');  
+        console.error('Streaming Error:', err);
+    }  
+    
+    sendBtn.disabled = false;  
     input.focus();
 });
 
-// === RESPONSE LOGIC (via backend proxy) ===
-async function getResponse(userMessage) {
-    const lowerMsg = userMessage.toLowerCase().trim();
-
-    const siapaKamuKeywords = [
-        'siapa kamu', 'kamu siapa', 'who are you', 'siapa kamu?', 
-        'kamu siapa?', 'siapa kamu nih', 'kamu siapa nih'
-    ];
-    if (siapaKamuKeywords.some(kw => lowerMsg.includes(kw))) {
-        return `Saya adalah **Swampy AI**, asisten cerdas yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Saya siap bantu kamu coding, belajar, atau ngobrol!`;
+// === STREAMING MESSAGE CLASS ===
+class StreamingMessage {
+    constructor() {
+        this.wrapper = document.createElement('div');
+        this.wrapper.className = 'message-wrapper bot';
+        this.time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        this.contentElement = null;
+        this.isStreaming = true;
+        
+        this.initializeDOM();
+        chatbox.appendChild(this.wrapper);
+        chatbox.scrollTop = chatbox.scrollHeight;
+        messageCount++;
+        updateMessageCount();
     }
 
-    if (lowerMsg.includes('apa mode') || lowerMsg.includes('model apa') || lowerMsg === 'mode') {
-        return `Saya sedang menggunakan model **${MODELS[currentModel].name}** — *${MODELS[currentModel].desc}*`;
+    initializeDOM() {
+        const profile = `<div class="message-avatar bot"><img src="${isDarkMode ? DARK_PROFILE : LIGHT_PROFILE}" alt="AI"></div>`;
+        
+        this.wrapper.innerHTML = `  
+            ${profile}  
+            <div class="message-content">  
+                <div class="message-header">  
+                    <span>Swampy AI</span>  
+                    <span>•</span>  
+                    <span>${this.time}</span>  
+                </div>  
+                <div class="message-bubble bot streaming-bubble">  
+                    <div class="streaming-content"></div>  
+                    <div class="streaming-cursor"></div>  
+                </div>  
+                <div class="message-actions streaming-actions" style="display: none;">  
+                    <button class="message-action feedback-btn like-btn" onclick="sendFeedback(this, 'like')">  
+                        <i class="fas fa-thumbs-up"></i> Suka  
+                    </button>  
+                    <button class="message-action feedback-btn dislike-btn" onclick="sendFeedback(this, 'dislike')">  
+                        <i class="fas fa-thumbs-down"></i> Tidak Suka  
+                    </button>  
+                    <button class="message-action copy-btn" onclick="copyMessage(this)">  
+                        <i class="fas fa-copy"></i> Salin  
+                    </button>  
+                    <button class="message-action stop-btn" onclick="stopStreaming(this)">  
+                        <i class="fas fa-stop"></i> Stop  
+                    </button>  
+                </div>  
+            </div>  
+        `;
+        
+        this.contentElement = this.wrapper.querySelector('.streaming-content');
+        this.addStreamingStyles();
     }
 
-    const systemPrompt = MODELS[currentModel].prompt;
-    const fullPrompt = `${systemPrompt}\n\nUser: ${userMessage}\nAssistant:`;
-
-    chatHistory.push({ role: 'user', parts: [{ text: fullPrompt }] });
-
-    const payload = {
-        contents: chatHistory.slice(-5),
-        generationConfig: { 
-            temperature: 0.7, 
-            maxOutputTokens: 1024, 
-            topP: 0.8 
+    addStreamingStyles() {
+        if (!document.getElementById('streaming-styles')) {
+            const styles = `
+                .streaming-bubble {
+                    position: relative;
+                    min-height: 20px;
+                }
+                .streaming-content {
+                    display: inline;
+                }
+                .streaming-cursor {
+                    display: inline-block;
+                    width: 8px;
+                    height: 16px;
+                    background: var(--accent);
+                    margin-left: 2px;
+                    animation: blink 1s infinite;
+                    vertical-align: middle;
+                }
+                .streaming-actions {
+                    transition: opacity 0.3s ease;
+                }
+                @keyframes blink {
+                    0%, 50% { opacity: 1; }
+                    51%, 100% { opacity: 0; }
+                }
+                .message-actions .stop-btn {
+                    color: var(--error);
+                }
+                .message-actions .stop-btn:hover {
+                    background: var(--error);
+                    color: white;
+                }
+            `;
+            const styleSheet = document.createElement('style');
+            styleSheet.id = 'streaming-styles';
+            styleSheet.textContent = styles;
+            document.head.appendChild(styleSheet);
         }
-    };
+    }
 
-    try {
-        const res = await fetch(GEMINI_ENDPOINT, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-            signal: controller?.signal
-        });
+    updateContent(text) {
+        if (!this.isStreaming) return;
+        
+        this.contentElement.innerHTML = formatMessage(text);
+        this.scrollToBottom();
+    }
 
-        if (!res.ok) {
-            const err = await res.text();
-            console.warn('Gemini error:', err);
-            return `Maaf, saya mengalami gangguan jaringan. Tapi saya tetap bisa bantu! Coba tanya lagi.`;
+    scrollToBottom() {
+        chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    finalize() {
+        this.isStreaming = false;
+        
+        // Hapus cursor streaming
+        const cursor = this.wrapper.querySelector('.streaming-cursor');
+        if (cursor) cursor.remove();
+        
+        // Tampilkan action buttons
+        const actions = this.wrapper.querySelector('.streaming-actions');
+        if (actions) actions.style.display = 'flex';
+        
+        // Ganti class untuk menghilangkan efek streaming
+        const bubble = this.wrapper.querySelector('.streaming-bubble');
+        if (bubble) bubble.classList.remove('streaming-bubble');
+    }
+
+    stopStreaming() {
+        this.isStreaming = false;
+        
+        const cursor = this.wrapper.querySelector('.streaming-cursor');
+        if (cursor) cursor.remove();
+        
+        const actions = this.wrapper.querySelector('.streaming-actions');
+        if (actions) {
+            actions.style.display = 'flex';
+            // Hapus stop button
+            const stopBtn = actions.querySelector('.stop-btn');
+            if (stopBtn) stopBtn.remove();
         }
-
-        const data = await res.json();
-        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-
-        if (!reply || reply === '') {
-            return `Saya tidak bisa memberikan jawaban lengkap saat ini, tapi saya tetap di sini! Coba ubah pertanyaannya sedikit.`;
+        
+        const bubble = this.wrapper.querySelector('.streaming-bubble');
+        if (bubble) {
+            bubble.classList.remove('streaming-bubble');
+            // Tambahkan indikator bahwa streaming dihentikan
+            if (this.contentElement.textContent.trim() === '') {
+                this.contentElement.textContent = '❌ Respons dihentikan oleh pengguna';
+            }
         }
-
-        chatHistory.push({ role: 'model', parts: [{ text: reply }] });
-        if (chatHistory.length > 10) chatHistory = chatHistory.slice(-10);
-        return reply;
-
-    } catch (err) {
-        if (err.name === 'AbortError') {
-            return `Waktu habis. Saya coba jawab singkat: **Pertanyaanmu menarik!** Tapi jaringan lambat. Coba lagi ya!`;
-        }
-        return `Saya mengalami error teknis. Tapi tenang, saya masih bisa bantu! Coba tanya sesuatu yang lain.`;
     }
 }
 
-// === ADD MESSAGE DENGAN LIKE & DISLIKE ===
+// Fungsi untuk membuat streaming message
+function createStreamingMessage() {
+    return new StreamingMessage();
+}
+
+// Fungsi untuk stop streaming dari button
+window.stopStreaming = function(btn) {
+    if (currentStreamingMessage) {
+        currentStreamingMessage.stopStreaming();
+        controller.abort();
+        currentStreamingMessage = null;
+        showToast('Dihentikan', 'Streaming dihentikan', 'error');
+    }
+};
+
+// === STREAMING RESPONSE LOGIC ===
+async function getStreamingResponse(userMessage, onChunk) {
+    const lowerMsg = userMessage.toLowerCase().trim();
+
+    // Cek pertanyaan khusus
+    const siapaKamuKeywords = [  
+        'siapa kamu', 'kamu siapa', 'who are you', 'siapa kamu?',   
+        'kamu siapa?', 'siapa kamu nih', 'kamu siapa nih'  
+    ];  
+    if (siapaKamuKeywords.some(kw => lowerMsg.includes(kw))) {  
+        const response = `Saya adalah **Swampy AI**, asisten cerdas yang dibuat oleh [Nauval](https://github.com/Akbar675-prog). Saya siap bantu kamu coding, belajar, atau ngobrol!`;
+        // Simulasi streaming untuk response cepat
+        await simulateStreaming(response, onChunk);
+        return;
+    }  
+
+    if (lowerMsg.includes('apa mode') || lowerMsg.includes('model apa') || lowerMsg === 'mode') {  
+        const response = `Saya sedang menggunakan model **${MODELS[currentModel].name}** — *${MODELS[currentModel].desc}*`;
+        await simulateStreaming(response, onChunk);
+        return;
+    }
+
+    // Siapkan data untuk dikirim ke API
+    const systemPrompt = MODELS[currentModel].prompt;
+    
+    const payload = {
+        model: currentModel,
+        message: userMessage,
+        systemPrompt: systemPrompt,
+        history: chatHistory.slice(-4),
+        stream: true // Flag untuk streaming
+    };
+
+    try {  
+        const res = await fetch(OPENAI_ENDPOINT, {  
+            method: 'POST',  
+            headers: { 'Content-Type': 'application/json' },  
+            body: JSON.stringify(payload),  
+            signal: controller?.signal  
+        });  
+
+        if (!res.ok) {  
+            const err = await res.text();  
+            throw new Error(`HTTP ${res.status}: ${err}`);  
+        }  
+
+        // Handle streaming response
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            
+            if (done) break;
+            
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            
+            buffer = lines.pop() || ''; // Simpan incomplete line untuk next chunk
+            
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    const data = line.slice(6);
+                    
+                    if (data === '[DONE]') {
+                        return;
+                    }
+                    
+                    try {
+                        const parsed = JSON.parse(data);
+                        const chunk = parsed.choices?.[0]?.delta?.content || 
+                                     parsed.content || 
+                                     parsed.chunk || 
+                                     '';
+                        
+                        if (chunk && onChunk) {
+                            onChunk(chunk);
+                        }
+                    } catch (e) {
+                        // Ignore JSON parse errors for incomplete chunks
+                    }
+                }
+            }
+        }
+
+    } catch (err) {  
+        if (err.name !== 'AbortError') {
+            console.error('Streaming Error:', err);
+            throw err;
+        }
+    }
+}
+
+// Fallback: Simulasi streaming untuk response cepat
+async function simulateStreaming(text, onChunk) {
+    const words = text.split(' ');
+    let accumulated = '';
+    
+    for (let i = 0; i < words.length; i++) {
+        if (!currentStreamingMessage || !currentStreamingMessage.isStreaming) break;
+        
+        accumulated += (i === 0 ? '' : ' ') + words[i];
+        onChunk(accumulated);
+        
+        // Random delay untuk efek mengetik natural
+        await new Promise(resolve => setTimeout(resolve, Math.random() * 50 + 30));
+    }
+}
+
+// === ADD MESSAGE REGULAR (untuk non-streaming) ===
 function addMessage(text, sender) {
     const wrapper = document.createElement('div');
     wrapper.className = `message-wrapper ${sender}`;
     const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
-    const profile = sender === 'user' 
-        ? `<div class="message-avatar user"><i class="fas fa-user"></i></div>` 
-        : `<div class="message-avatar bot"><img src="${isDarkMode ? DARK_PROFILE : LIGHT_PROFILE}" alt="AI"></div>`;
+    const profile = sender === 'user'   
+        ? `<div class="message-avatar user"><i class="fas fa-user"></i></div>`   
+        : `<div class="message-avatar bot"><img src="${isDarkMode ? DARK_PROFILE : LIGHT_PROFILE}" alt="AI"></div>`;  
 
-    const feedbackButtons = sender === 'bot' ? `
-        <div class="message-actions">
-            <button class="message-action feedback-btn like-btn" onclick="sendFeedback(this, 'like')">
-                <i class="fas fa-thumbs-up"></i> Suka
-            </button>
-            <button class="message-action feedback-btn dislike-btn" onclick="sendFeedback(this, 'dislike')">
-                <i class="fas fa-thumbs-down"></i> Tidak Suka
-            </button>
-            <button class="message-action copy-btn" onclick="copyMessage(this)">
-                <i class="fas fa-copy"></i> Salin
-            </button>
-        </div>
-    ` : '';
+    const feedbackButtons = sender === 'bot' ? `  
+        <div class="message-actions">  
+            <button class="message-action feedback-btn like-btn" onclick="sendFeedback(this, 'like')">  
+                <i class="fas fa-thumbs-up"></i> Suka  
+            </button>  
+            <button class="message-action feedback-btn dislike-btn" onclick="sendFeedback(this, 'dislike')">  
+                <i class="fas fa-thumbs-down"></i> Tidak Suka  
+            </button>  
+            <button class="message-action copy-btn" onclick="copyMessage(this)">  
+                <i class="fas fa-copy"></i> Salin  
+            </button>  
+        </div>  
+    ` : '';  
 
-    wrapper.innerHTML = `
-        ${profile}
-        <div class="message-content">
-            <div class="message-header">
-                <span>${sender === 'user' ? 'Kamu' : 'Swampy AI'}</span>
-                <span>•</span>
-                <span>${time}</span>
-            </div>
-            <div class="message-bubble ${sender}">${formatMessage(text)}</div>
-            ${feedbackButtons}
-        </div>
-    `;
-    chatbox.appendChild(wrapper);
-    chatbox.scrollTop = chatbox.scrollHeight;
-    messageCount++;
+    wrapper.innerHTML = `  
+        ${profile}  
+        <div class="message-content">  
+            <div class="message-header">  
+                <span>${sender === 'user' ? 'Kamu' : 'Swampy AI'}</span>  
+                <span>•</span>  
+                <span>${time}</span>  
+            </div>  
+            <div class="message-bubble ${sender}">${formatMessage(text)}</div>  
+            ${feedbackButtons}  
+        </div>  
+    `;  
+    chatbox.appendChild(wrapper);  
+    chatbox.scrollTop = chatbox.scrollHeight;  
+    messageCount++;  
     updateMessageCount();
 }
 
@@ -1268,61 +1511,61 @@ window.sendFeedback = function(btn, type) {
     const likeBtn = btn.closest('.message-actions').querySelector('.like-btn');
     const dislikeBtn = btn.closest('.message-actions').querySelector('.dislike-btn');
 
-    likeBtn.classList.remove('liked');
-    dislikeBtn.classList.remove('disliked');
+    likeBtn.classList.remove('liked');  
+    dislikeBtn.classList.remove('disliked');  
 
-    if (type === 'like') {
-        likeBtn.classList.add('liked');
-        showToast('Terima Kasih!', 'Kamu suka jawaban ini', 'success');
-        sendToTelegram('Feedback', new Date().toLocaleTimeString(), 'User menyukai jawaban');
-    } else {
-        dislikeBtn.classList.add('disliked');
-        showToast('Maaf', 'Kami akan perbaiki jawaban berikutnya', 'error');
-        sendToTelegram('Feedback', new Date().toLocaleTimeString(), 'User tidak suka jawaban');
-    }
+    if (type === 'like') {  
+        likeBtn.classList.add('liked');  
+        showToast('Terima Kasih!', 'Kamu suka jawaban ini', 'success');  
+        sendToTelegram('Feedback', new Date().toLocaleTimeString(), 'User menyukai jawaban');  
+    } else {  
+        dislikeBtn.classList.add('disliked');  
+        showToast('Maaf', 'Kami akan perbaiki jawaban berikutnya', 'error');  
+        sendToTelegram('Feedback', new Date().toLocaleTimeString(), 'User tidak suka jawaban');  
+    }  
 
-    likeBtn.disabled = true;
+    likeBtn.disabled = true;  
     dislikeBtn.disabled = true;
 };
 
-// === FORMAT, COPY, TYPING, STATS, TOAST ===
+// === FORMAT MESSAGE ===
 function formatMessage(text) {
     const escapeHtml = str => { const div = document.createElement('div'); div.textContent = str; return div.innerHTML; };
     const codeBlocks = [];
     let processedText = text;
 
-    processedText = processedText.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
-        const language = lang || 'text';
-        const codeId = 'code-' + Math.random().toString(36).substr(2, 9);
-        const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
-        codeBlocks.push(`
-            <div class="code-block">
-                <div class="code-header">
-                    <span class="code-language">${escapeHtml(language)}</span>
-                    <button class="code-copy-btn" onclick="copyCode('${codeId}')">
-                        <i class="fas fa-copy"></i> Salin
-                    </button>
-                </div>
-                <div class="code-content">
-                    <pre><code id="${codeId}">${escapeHtml(code.trim())}</code></pre>
-                </div>
-            </div>
-        `);
-        return placeholder;
-    });
+    processedText = processedText.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {  
+        const language = lang || 'text';  
+        const codeId = 'code-' + Math.random().toString(36).substr(2, 9);  
+        const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;  
+        codeBlocks.push(`  
+            <div class="code-block">  
+                <div class="code-header">  
+                    <span class="code-language">${escapeHtml(language)}</span>  
+                    <button class="code-copy-btn" onclick="copyCode('${codeId}')">  
+                        <i class="fas fa-copy"></i> Salin  
+                    </button>  
+                </div>  
+                <div class="code-content">  
+                    <pre><code id="${codeId}">${escapeHtml(code.trim())}</code></pre>  
+                </div>  
+            </div>  
+        `);  
+        return placeholder;  
+    });  
 
-    processedText = processedText.replace(/\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/g, (match, title, url) => {
-        return `<a href="${url.trim()}" target="_blank" rel="noopener noreferrer" class="message-link">${escapeHtml(title.trim())}</a>`;
-    });
+    processedText = processedText.replace(/\[([^\]]+)\]\((https?:\/\/[^\s\)]+)\)/g, (match, title, url) => {  
+        return `<a href="${url.trim()}" target="_blank" rel="noopener noreferrer" class="message-link">${escapeHtml(title.trim())}</a>`;  
+    });  
 
-    processedText = processedText.replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>');
-    processedText = processedText.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-    processedText = processedText.replace(/\*(.+?)\*/g, '<em>$1</em>');
-    processedText = processedText.replace(/\n/g, '<br>');
+    processedText = processedText.replace(/`([^`\n]+)`/g, '<code class="inline-code">$1</code>');  
+    processedText = processedText.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');  
+    processedText = processedText.replace(/\*(.+?)\*/g, '<em>$1</em>');  
+    processedText = processedText.replace(/\n/g, '<br>');  
 
-    codeBlocks.forEach((block, i) => {
-        processedText = processedText.replace(`__CODE_BLOCK_${i}__`, block);
-    });
+    codeBlocks.forEach((block, i) => {  
+        processedText = processedText.replace(`__CODE_BLOCK_${i}__`, block);  
+    });  
 
     return processedText;
 }
@@ -1350,27 +1593,6 @@ window.copyMessage = async function(btn) {
     } catch { showToast('Error', 'Gagal menyalin', 'error'); }
 };
 
-function showTypingIndicator() {
-    const el = document.createElement('div');
-    el.className = 'typing-indicator';
-    el.id = 'typingIndicator';
-    el.innerHTML = `
-        <div class="message-avatar bot"><img src="${isDarkMode ? DARK_PROFILE : LIGHT_PROFILE}" alt="AI"></div>
-        <div class="typing-dots">
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-            <div class="typing-dot"></div>
-        </div>
-    `;
-    chatbox.appendChild(el);
-    chatbox.scrollTop = chatbox.scrollHeight;
-}
-
-function hideTypingIndicator() {
-    const el = document.getElementById('typingIndicator');
-    if (el) el.remove();
-}
-
 function hideWelcome() { welcomeScreen.style.display = 'none'; }
 
 clearChatBtn.addEventListener('click', () => {
@@ -1378,6 +1600,10 @@ clearChatBtn.addEventListener('click', () => {
         chatbox.innerHTML = '';
         welcomeScreen.style.display = 'flex';
         messageCount = 0; responseTimes = []; chatHistory = [];
+        if (currentStreamingMessage) {
+            currentStreamingMessage.stopStreaming();
+            currentStreamingMessage = null;
+        }
         updateMessageCount(); updateAvgResponse();
         showToast('Dibersihkan', 'Riwayat dihapus', 'success');
     }
@@ -1419,14 +1645,17 @@ function showToast(title, msg, type = 'success') {
     toast.querySelector('.toast-title').textContent = title;
     toast.querySelector('.toast-message').textContent = msg;
     icon.className = `toast-icon ${type}`;
-    icon.innerHTML = type === 'success' 
-        ? '<i class="fas fa-check"></i>' 
+    icon.innerHTML = type === 'success'
+        ? '<i class="fas fa-check"></i>'
         : '<i class="fas fa-times"></i>';
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
+// Inisialisasi
 input.focus();
+updateBotAvatar();
+updateWelcomeIcon();
     </script>
 </body>
-</html>
+    </html>
