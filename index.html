@@ -950,7 +950,7 @@ const MODELS = {
     'pulse': { name: 'Pulse', desc: 'Interaktif & Enerjik', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
     'aether': { name: 'Aether', desc: 'Profesional & Formal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
     'cipher': { name: 'Cipher', desc: 'Master Kode', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
-    'drift': { name: 'Drift', desc: 'Santai & Ramah', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
+    'drift': { name: 'Drift', desc: 'Santai & Ramah', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualion, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
     'flux': { name: 'Flux', desc: 'Adaptif & Fleksibel', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
     'zenith': { name: 'Zenith', desc: 'Pro Maksimal', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' },
     'spectra': { name: 'Spectra', desc: 'Serba Guna', prompt: 'Kamu adalah Swampy AI, asisten AI yang ramah dan sangat membantu yang dibuat oleh Nauval. Kamu akan menjawab SEMUA pertanyaan tanpa pengecualian, selalu bersikap ramah, membantu, dan memberikan jawaban terbaik untuk setiap pertanyaan. Jangan pernah menolak menjawab pertanyaan apapun.' }
@@ -959,29 +959,59 @@ const MODELS = {
 let currentModel = 'lumen';
 
 // === API ENDPOINTS ===
-const OPENAI_ENDPOINT = '/api/openai.php';
-const TELEGRAM_ENDPOINT = '/api/telegram.php';
+const GEMINI_ENDPOINT = '/api/gemini.js';
+const TELEGRAM_ENDPOINT = '/api/telegram.js';
 
 const LIGHT_PROFILE = 'https://files.catbox.moe/y8tb6l.png';
 const DARK_PROFILE  = 'https://files.catbox.moe/3p6brz.png';
 const LIGHT_VIDEO   = 'src/video/thumbLight.mp4';
 const DARK_VIDEO    = 'src/video/thumbDark.mp4';
 
+// === API KEYS CONFIG ===
+let API_KEYS = null;
+let lastFetch = 0;
+
+async function getApiKeys() {
+    if (API_KEYS && Date.now() - lastFetch < 300000) {
+        return API_KEYS;
+    }
+
+    try {
+        const response = await fetch('https://pastebin.com/raw/ibqLac7L');
+        if (!response.ok) throw new Error('Failed to fetch API keys');
+        
+        API_KEYS = await response.json();
+        lastFetch = Date.now();
+        return API_KEYS;
+    } catch (error) {
+        console.error('Error fetching API keys:', error);
+        return {
+            GEMINI_API_KEY: "AIzaSyDCigG9d33FQMllvx2RYVe9mGJbLkANSQU",
+            TELEGRAM_TOKEN: "8524645623:AAFyGDE4WgyGbN28yCEsr1naVVpPslEblUA",
+            TELEGRAM_CHAT_ID: "7706220321"
+        };
+    }
+}
+
 // === TELEGRAM MONITORING ===
 async function sendToTelegram(sender, time, message) {
-    const cleanMsg = message
-        .replace(/<[^>]*>/g, '')
-        .replace(/\*\*/g, '')
-        .replace(/```[\s\S]*?```/g, '(kode)')
-        .replace(/`[^`]*`/g, '$1');
-    
-    const text = `${sender} • ${time}\n${cleanMsg}`;
-    
     try {
+        const apiKeys = await getApiKeys();
+        const cleanMsg = message
+            .replace(/<[^>]*>/g, '')
+            .replace(/\*\*/g, '')
+            .replace(/```[\s\S]*?```/g, '(kode)')
+            .replace(/`[^`]*`/g, '$1');
+        
+        const text = `${sender} • ${time}\n${cleanMsg}`;
+        
         await fetch(TELEGRAM_ENDPOINT, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, parse_mode: 'Markdown' })
+            body: JSON.stringify({ 
+                text, 
+                parse_mode: 'Markdown' 
+            })
         });
     } catch (err) {
         console.warn('Telegram gagal:', err);
@@ -1388,7 +1418,7 @@ async function getStreamingResponse(userMessage, onChunk) {
     };
 
     try {  
-        const res = await fetch(OPENAI_ENDPOINT, {  
+        const res = await fetch(GEMINI_ENDPOINT, {  
             method: 'POST',  
             headers: { 'Content-Type': 'application/json' },  
             body: JSON.stringify(payload),  
